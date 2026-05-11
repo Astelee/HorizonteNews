@@ -8,7 +8,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@drawable/gradient_header" />
+        android:background="#FF8C00" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
