@@ -15,7 +15,7 @@ class DetailActivity : AppCompatActivity() {
 
         val webView: WebView = findViewById(R.id.webView)
 
-        // Link da postagem
+        // URL da postagem
         val url = intent.getStringExtra("postUrl")
 
         // Configurações do WebView
@@ -28,11 +28,11 @@ class DetailActivity : AppCompatActivity() {
         settings.loadWithOverviewMode = true
         settings.setSupportZoom(false)
 
-        // User Agent estilo Chrome
+        // Faz o Blogger pensar que é Chrome normal
         settings.userAgentString =
             "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
 
-        // Script para limpar completamente o Blogger
+        // Script para limpar o Blogger
         val cleanBlogScript = """
             javascript:(function() {
 
@@ -71,7 +71,7 @@ class DetailActivity : AppCompatActivity() {
                 .tabs-outer,
                 .menu,
 
-                /* REMOVE SHARE */
+                /* REMOVE BOTÃO COMPARTILHAR */
                 .share-buttons,
                 .sharing,
                 .post-share-buttons,
@@ -121,7 +121,7 @@ class DetailActivity : AppCompatActivity() {
                     overflow: hidden !important;
                 }
 
-                /* AJUSTA LAYOUT */
+                /* AJUSTA O CONTEÚDO */
                 body {
                     margin: 0 !important;
                     padding: 0 !important;
@@ -242,3 +242,16 @@ class DetailActivity : AppCompatActivity() {
             webView.loadUrl(url)
         }
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+
+        val webView: WebView = findViewById(R.id.webView)
+
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
+}
