@@ -46,17 +46,19 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
         }
         holder.date.text = formattedDate
 
-        // Extrai primeira imagem
+        // Extrai primeira imagem do conteúdo
         val document = Jsoup.parse(post.content)
         val imageUrl = document.select("img").firstOrNull()?.attr("src")
 
+        // Carrega imagem com Glide
         Glide.with(holder.itemView.context)
             .load(imageUrl)
-            .placeholder(R.drawable.placeholder_image) // crie esse drawable depois
+            .placeholder(android.R.color.darker_gray)   // ← Corrigido
+            .error(android.R.color.darker_gray)         // ← Adicionado
             .centerCrop()
             .into(holder.image)
 
-        // Clique abre detalhe
+        // Clique abre a tela de detalhe
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, DetailActivity::class.java).apply {
