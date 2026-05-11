@@ -10,6 +10,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// ==================== INTERFACE DO BLOGGER ====================
+interface BloggerService {
+    @retrofit2.http.GET("blogs/${Config.BLOG_ID}/posts")
+    fun getPosts(@retrofit2.http.Query("key") apiKey: String): Call<PostResponse>
+}
+// ============================================================
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // TODO: Tratar erro (mostrar mensagem para usuário)
+                // TODO: Mostrar erro para o usuário
             }
         })
     }
@@ -46,7 +53,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        
+
+        // Cor da barra de status
         window.statusBarColor = getColor(R.color.primary_dark)
     }
 }
