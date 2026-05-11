@@ -6,17 +6,15 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Toolbar Azul Escuro -->
+    <!-- Header Laranja -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/primary_dark"
+        android:layout_height="75dp"
+        android:background="@color/orange_news"
         android:elevation="4dp"
-        app:titleTextColor="@android:color/white"
-        app:contentInsetStartWithNavigation="0dp">
+        app:titleTextColor="#FFFFFF">
 
-        <!-- Logo Centralizado -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,72 +26,6 @@
             android:letterSpacing="0.5" />
 
     </androidx.appcompat.widget.Toolbar>
-
-    <!-- Tabs de Categorias -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:background="#F8F9FA"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Política"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#0A1E3A"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingHorizontal="16dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Economia"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#0A1E3A"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingHorizontal="16dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cotidiano"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#0A1E3A"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingHorizontal="16dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Internacional"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#0A1E3A"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingHorizontal="16dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Esportes"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#0A1E3A"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:paddingHorizontal="16dp" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <!-- Lista de Notícias -->
     <androidx.recyclerview.widget.RecyclerView
