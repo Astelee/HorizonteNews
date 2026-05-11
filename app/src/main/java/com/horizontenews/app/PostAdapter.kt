@@ -28,23 +28,25 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = posts[position]
-        
+
         // 1. Define o Título
         holder.title.text = post.title
-        
+
         // 2. Define a Categoria
-        holder.category.text = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
-        
+        val categoryText = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
+        holder.category.text = categoryText
+
         // 3. Formata a Data
-        try {
+        val formattedDate: String = try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
             val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val date = inputFormat.parse(post.published)
-            holder.date.text = date?.let { outputFormat.format(it) } ?: post.published
+            date?.let { outputFormat.format(it) } ?: post.published
         } catch (e: Exception) {
-            holder.date.text = post.published
+            post.published
         }
-        
+        holder.date.text = formattedDate
+
         // 4. Carrega a Imagem
         val document = Jsoup.parse(post.content)
         val imageUrl = document.select("img").firstOrNull()?.attr("src")
@@ -55,20 +57,22 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
             .centerCrop()
             .into(holder.image)
 
-        // --- 5. AÇÃO DE CLIQUE: O QUE ESTAVA FALTANDO ---
+        // --- 5. AÇÃO DE CLIQUE: agora abre a DetailActivity com conteúdo LIMPO ---
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            
-            // Criamos a Intent para abrir a DetailActivity
-            val intent = Intent(context, DetailActivity::class.java)
-            
-            // Passamos a URL da notícia para a próxima tela
-            intent.putExtra("postUrl", post.url)
-            
-            // Iniciamos a transição de tela
+
+            val intent = Intent(context, DetailActivity::class.java).apply {
+                // Em vez de só a URL, passamos o conteúdo direto da API do Blogger
+                putExtra("postTitle", post.title)
+                putExtra("postContent", post.content)
+                putExtra("postDate", formattedDate)
+                putExtra("postCategory", categoryText)
+                putExtra("postImage", imageUrl)
+                putExtra("postUrl", post.url) // mantido caso queira usar para "compartilhar"
+            }
+
             context.startActivity(intent)
         }
     }
 
-    override fun getItemCount() = posts.size
-}
+    override fun getItemC
