@@ -20,11 +20,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew || true
 
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug
+        - name: Build with Gradle
+      run: gradle assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: Horizonte-News-Debug
-        path: app/build/outputs/apk/debug/*.apk
+        name: Horizonte-News-APK
+        path: "app/build/outputs/apk/debug/*.apk"
