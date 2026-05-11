@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Configura a Toolbar / Header
         setupToolbar()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -28,16 +27,17 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val service = retrofit.create(BloggerService::class.java)
+
         service.getPosts(Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 if (response.isSuccessful) {
-                    val posts = response.body()?.items ?: listOf()
+                    val posts = response.body()?.items ?: emptyList()
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // TODO: Mostrar mensagem de erro para o usuário
+                // TODO: Tratar erro (mostrar mensagem para usuário)
             }
         })
     }
@@ -45,10 +45,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        supportActionBar?.setDisplayShowTitleEnabled(false) // Vamos usar texto customizado
-
-        // Muda a cor da status bar
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        
         window.statusBarColor = getColor(R.color.primary_dark)
     }
 }
