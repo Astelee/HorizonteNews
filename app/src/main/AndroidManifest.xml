@@ -6,11 +6,11 @@
 
     <application
         android:allowBackup="true"
-        android:label="Horizonte News"
+        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+        android:theme="@style/Theme.HorizonteNews"
         android:usesCleartextTraffic="true">
-        
+
         <activity
             android:name="com.horizontenews.app.MainActivity"
             android:exported="true">
