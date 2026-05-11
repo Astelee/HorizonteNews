@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Configuração Retrofit + BloggerService
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/blogger/v3/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // TODO: Mostrar mensagem de erro para o usuário
+                // TODO: Mostrar erro
             }
         })
     }
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Muda cor da barra superior
-        window.statusBarColor = getColor(R.color.primary_dark)
+        window.statusBarColor = getColor(R.color.orange_news)
     }
 }
