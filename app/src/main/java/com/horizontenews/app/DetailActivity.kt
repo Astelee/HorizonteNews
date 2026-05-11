@@ -14,10 +14,9 @@ class DetailActivity : AppCompatActivity() {
 
         val webView: WebView = findViewById(R.id.webView)
 
-        // Recebe os dados já limpos da API do Blogger
-        val postTitle    = intent.getStringExtra("postTitle")    ?: ""
-        val postContent  = intent.getStringExtra("postContent")  ?: ""
-        val postDate     = intent.getStringExtra("postDate")     ?: ""
+        val postTitle = intent.getStringExtra("postTitle") ?: ""
+        val postContent = intent.getStringExtra("postContent") ?: ""
+        val postDate = intent.getStringExtra("postDate") ?: ""
         val postCategory = intent.getStringExtra("postCategory") ?: "NOTÍCIA"
 
         val settings: WebSettings = webView.settings
@@ -25,11 +24,9 @@ class DetailActivity : AppCompatActivity() {
         settings.loadsImagesAutomatically = true
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
-        settings.setSupportZoom(false)
 
         webView.webViewClient = WebViewClient()
 
-        // Monta HTML limpo — sem nenhum elemento do Blogger
         val htmlContent = """
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -37,46 +34,45 @@ class DetailActivity : AppCompatActivity() {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
-                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
                     body {
-                        font-family: -apple-system, system-ui, sans-serif;
+                        font-family: -apple-system, system-ui, BlinkMacSystemFont, sans-serif;
                         background: #ffffff;
                         color: #1a1a1a;
+                        line-height: 1.7;
+                        font-size: 16.5px;
                         padding: 16px;
-                        line-height: 1.8;
-                        font-size: 16px;
                     }
                     .category {
                         color: #E87722;
-                        font-size: 11px;
+                        font-size: 13px;
                         font-weight: 700;
                         text-transform: uppercase;
-                        letter-spacing: 1.5px;
-                        margin-bottom: 10px;
-                    }
-                    h1 {
-                        font-size: 22px;
-                        font-weight: 800;
-                        line-height: 1.3;
-                        color: #111111;
+                        letter-spacing: 1px;
                         margin-bottom: 8px;
                     }
+                    h1 {
+                        font-size: 24px;
+                        font-weight: 800;
+                        line-height: 1.25;
+                        margin-bottom: 12px;
+                        color: #111;
+                    }
                     .date {
-                        font-size: 13px;
-                        color: #999999;
-                        margin-bottom: 20px;
+                        color: #777;
+                        font-size: 14px;
+                        margin-bottom: 24px;
                         padding-bottom: 16px;
-                        border-bottom: 1px solid #eeeeee;
+                        border-bottom: 1px solid #eee;
                     }
                     .content img {
                         max-width: 100% !important;
                         height: auto !important;
-                        border-radius: 8px;
-                        margin: 12px 0;
-                        display: block;
+                        border-radius: 12px;
+                        margin: 20px 0;
                     }
-                    .content p { margin-bottom: 16px; }
-                    .content a { color: #E87722; text-decoration: none; }
+                    .content p { margin-bottom: 18px; }
+                    .content a { color: #E87722; }
                 </style>
             </head>
             <body>
@@ -88,23 +84,11 @@ class DetailActivity : AppCompatActivity() {
             </html>
         """.trimIndent()
 
-        // Renderiza conteúdo direto — impossível aparecer elementos do Blogger
-        webView.loadDataWithBaseURL(
-            "https://www.blogger.com",
-            htmlContent,
-            "text/html",
-            "UTF-8",
-            null
-        )
+        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
     }
 
-    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val webView: WebView = findViewById(R.id.webView)
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+        if (webView.canGoBack()) webView.goBack() else super.onBackPressed()
     }
 }
