@@ -4,23 +4,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-interface BloggerService {
-    @GET("blogs/${Config.BLOG_ID}/posts")
-    fun getPosts(@Query("key") apiKey: String): Call<PostResponse>
-}
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Configura a Toolbar / Header
+        setupToolbar()
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -38,7 +35,20 @@ class MainActivity : AppCompatActivity() {
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
-            override fun onFailure(call: Call<PostResponse>, t: Throwable) {}
+
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                // TODO: Mostrar mensagem de erro para o usuário
+            }
         })
+    }
+
+    private fun setupToolbar() {
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayShowTitleEnabled(false) // Vamos usar texto customizado
+
+        // Muda a cor da status bar
+        window.statusBarColor = getColor(R.color.primary_dark)
     }
 }
