@@ -16,7 +16,7 @@
         app:titleTextColor="@android:color/white"
         app:contentInsetStartWithNavigation="0dp">
 
-        <!-- Botão Voltar -->
+        <!-- Botão Voltar (usando ícone padrão do Material) -->
         <ImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
@@ -24,10 +24,10 @@
             android:layout_gravity="start"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
-            android:src="@android:drawable/ic_menu_back"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"  <!-- Ícone corrigido -->
             android:tint="@android:color/white" />
 
-        <!-- Título centralizado (opcional) -->
+        <!-- Logo Centralizado -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
