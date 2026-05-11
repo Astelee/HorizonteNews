@@ -1,6 +1,5 @@
 package com.horizontenews.app
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,14 +35,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: listOf()
-                    recyclerView.adapter = PostAdapter(posts) { post ->
-                        // Ao clicar no post, abre a tela limpa
-                        val intent = Intent(this@MainActivity, PostDetailActivity::class.java)
-                        intent.putExtra("title", post.title)
-                        intent.putExtra("content", post.content)
-                        intent.putExtra("published", post.published)
-                        startActivity(intent)
-                    }
+                    recyclerView.adapter = PostAdapter(posts)
                 }
             }
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {}
