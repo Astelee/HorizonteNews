@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="orange_main">#FF8C00</color>
-    <color name="orange_dark">#FF4500</color>
+    <style name="Theme.AppCompat.Light.DarkActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="colorAccent">@color/orange_news</item>
+    </style>
 </resources>
