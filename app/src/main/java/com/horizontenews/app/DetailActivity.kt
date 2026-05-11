@@ -1,138 +1,244 @@
-val hideLoginScript = """
-    javascript:(function() {
+package com.horizontenews.app
 
-        var style = document.createElement('style');
-        style.innerHTML = `
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 
-        /* REMOVE HEADER COMPLETO */
-        header,
-        .header-outer,
-        .header-inner,
-        .Header,
-        .Header h1,
-        .Header .descriptionwrapper,
-        .mobile-header,
-        .centered-top,
-        .top-bar,
-        .search,
-        .search-bar,
-        .search-tab,
-        .search-expand,
-        .search-icon,
-        .header-widget,
-        .nav-wrapper,
-        .navigation,
-        .tabs-inner,
-        .sidebar-container,
-        .dim-overlay,
+class DetailActivity : AppCompatActivity() {
 
-        /* REMOVE BOTÕES */
-        .share-buttons,
-        .sharing,
-        .post-share-buttons,
-        .share-button,
-        .post-icons,
-        .byline.share,
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detail)
 
-        /* REMOVE COMENTÁRIOS */
-        #comments,
-        .comments,
-        .comment-form,
-        .comment-thread,
-        #comment-holder,
-        #comment-editor,
-        iframe[src*="comment"],
+        val webView: WebView = findViewById(R.id.webView)
 
-        /* REMOVE FOOTER */
-        footer,
-        .footer,
-        .footer-outer,
-        .footer-inner,
-        .footer-section,
-        .credit,
-        .copyright,
-        .Attribution,
-        .Attribution1,
-        .Attribution2,
+        // Link da postagem
+        val url = intent.getStringExtra("postUrl")
 
-        /* REMOVE NAVBAR BLOGGER */
-        #navbar,
-        #navbar-iframe,
-        .navbar,
-        .navbar-iframe
+        // Configurações do WebView
+        val settings: WebSettings = webView.settings
+        settings.javaScriptEnabled = true
+        settings.domStorageEnabled = true
+        settings.databaseEnabled = true
+        settings.loadsImagesAutomatically = true
+        settings.useWideViewPort = true
+        settings.loadWithOverviewMode = true
+        settings.setSupportZoom(false)
 
-        {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            max-height: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-        }
+        // User Agent estilo Chrome
+        settings.userAgentString =
+            "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
 
-        /* AJUSTA A PÁGINA */
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #ffffff !important;
-        }
+        // Script para limpar completamente o Blogger
+        val cleanBlogScript = """
+            javascript:(function() {
 
-        .main-wrapper,
-        .main-inner,
-        .content-outer,
-        .content-inner,
-        .post-outer,
-        .post,
-        .post-body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }
+                var style = document.createElement('style');
 
-        img {
-            max-width: 100% !important;
-            height: auto !important;
-        }
+                style.innerHTML = `
 
-        `;
-        
-        document.head.appendChild(style);
+                /* REMOVE HEADER */
+                header,
+                .header,
+                .header-outer,
+                .header-inner,
+                .mobile-header,
+                .centered-top-container,
+                .centered-top,
+                .top-bar,
+                .top-header,
+                .Header,
+                .Header h1,
+                .Header .descriptionwrapper,
+                .header-widget,
 
-        function removeElements() {
-            var selectors = [
-                'header',
-                '.header-outer',
-                '.mobile-header',
-                '.search',
-                '.search-bar',
-                '.share-buttons',
-                '.sharing',
-                '#comments',
-                'footer',
-                '.footer',
-                '.Attribution',
-                '#navbar',
-                '#navbar-iframe'
-            ];
+                /* REMOVE PESQUISA */
+                .search,
+                .search-bar,
+                .search-tab,
+                .search-expand,
+                .search-icon,
+                #search,
 
-            selectors.forEach(function(selector) {
-                document.querySelectorAll(selector).forEach(function(el) {
-                    el.remove();
+                /* REMOVE MENU */
+                nav,
+                .navigation,
+                .tabs,
+                .tabs-inner,
+                .tabs-outer,
+                .menu,
+
+                /* REMOVE SHARE */
+                .share-buttons,
+                .sharing,
+                .post-share-buttons,
+                .share-button,
+                .post-icons,
+                .byline.share,
+
+                /* REMOVE COMENTÁRIOS */
+                #comments,
+                .comments,
+                .comment-form,
+                .comment-thread,
+                #comment-holder,
+                #comment-editor,
+                iframe[src*="comment"],
+                iframe[src*="accounts.google.com"],
+
+                /* REMOVE FOOTER */
+                footer,
+                .footer,
+                .footer-outer,
+                .footer-inner,
+                .footer-section,
+                .copyright,
+                .credit,
+                .Attribution,
+                .Attribution1,
+                .Attribution2,
+
+                /* REMOVE NAVBAR BLOGGER */
+                #navbar,
+                #navbar-iframe,
+                .navbar,
+                .navbar-iframe,
+
+                /* REMOVE SIDEBAR */
+                .sidebar,
+                .sidebar-container,
+                .sidebar-wrapper
+
+                {
+                    display: none !important;
+                    visibility: hidden !important;
+                    height: 0 !important;
+                    max-height: 0 !important;
+                    opacity: 0 !important;
+                    overflow: hidden !important;
+                }
+
+                /* AJUSTA LAYOUT */
+                body {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: #ffffff !important;
+                    overflow-x: hidden !important;
+                }
+
+                .main-wrapper,
+                .main-inner,
+                .content,
+                .content-outer,
+                .content-inner,
+                .post,
+                .post-outer,
+                .post-body-container,
+                .post-body {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+
+                img {
+                    max-width: 100% !important;
+                    height: auto !important;
+                    border-radius: 0 !important;
+                }
+
+                `;
+
+                document.head.appendChild(style);
+
+                function removeElements() {
+
+                    var selectors = [
+                        'header',
+                        '.header',
+                        '.header-outer',
+                        '.mobile-header',
+                        '.search',
+                        '.search-bar',
+                        '.share-buttons',
+                        '.sharing',
+                        '#comments',
+                        '.comments',
+                        'footer',
+                        '.footer',
+                        '.Attribution',
+                        '#navbar',
+                        '#navbar-iframe',
+                        '.sidebar'
+                    ];
+
+                    selectors.forEach(function(selector) {
+                        document.querySelectorAll(selector).forEach(function(el) {
+                            el.remove();
+                        });
+                    });
+                }
+
+                removeElements();
+
+                var observer = new MutationObserver(function() {
+                    removeElements();
                 });
-            });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+            })();
+        """.trimIndent()
+
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                url: String?
+            ): Boolean {
+
+                if (url != null &&
+                    (
+                        url.contains("accounts.google.com") ||
+                        url.contains("ServiceLogin") ||
+                        url.contains("/signin") ||
+                        url.contains("blogger.com/comment")
+                    )
+                ) {
+                    return true
+                }
+
+                return false
+            }
+
+            override fun onPageStarted(
+                view: WebView?,
+                url: String?,
+                favicon: Bitmap?
+            ) {
+                super.onPageStarted(view, url, favicon)
+
+                view?.evaluateJavascript(cleanBlogScript, null)
+            }
+
+            override fun onPageFinished(
+                view: WebView?,
+                url: String?
+            ) {
+                super.onPageFinished(view, url)
+
+                view?.evaluateJavascript(cleanBlogScript, null)
+            }
         }
 
-        removeElements();
-
-        var observer = new MutationObserver(function() {
-            removeElements();
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-    })();
-""".trimIndent()
+        // Carrega a postagem
+        if (url != null) {
+            webView.loadUrl(url)
+        }
+    }
