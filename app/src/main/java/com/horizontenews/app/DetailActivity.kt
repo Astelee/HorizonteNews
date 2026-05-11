@@ -1,114 +1,138 @@
-package com.horizontenews.app
+val hideLoginScript = """
+    javascript:(function() {
 
-import android.os.Bundle
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.appcompat.app.AppCompatActivity
+        var style = document.createElement('style');
+        style.innerHTML = `
 
-class DetailActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        /* REMOVE HEADER COMPLETO */
+        header,
+        .header-outer,
+        .header-inner,
+        .Header,
+        .Header h1,
+        .Header .descriptionwrapper,
+        .mobile-header,
+        .centered-top,
+        .top-bar,
+        .search,
+        .search-bar,
+        .search-tab,
+        .search-expand,
+        .search-icon,
+        .header-widget,
+        .nav-wrapper,
+        .navigation,
+        .tabs-inner,
+        .sidebar-container,
+        .dim-overlay,
 
-        val webView: WebView = findViewById(R.id.webView)
+        /* REMOVE BOTÕES */
+        .share-buttons,
+        .sharing,
+        .post-share-buttons,
+        .share-button,
+        .post-icons,
+        .byline.share,
 
-        // Recupera o link enviado pelo Adapter
-        val url = intent.getStringExtra("postUrl")
+        /* REMOVE COMENTÁRIOS */
+        #comments,
+        .comments,
+        .comment-form,
+        .comment-thread,
+        #comment-holder,
+        #comment-editor,
+        iframe[src*="comment"],
 
-        // Configurações avançadas para o WebView
-        val settings = webView.settings
-        settings.javaScriptEnabled = true
-        settings.domStorageEnabled = true
-        settings.databaseEnabled = true
-        settings.setSupportZoom(true)
-        settings.builtInZoomControls = true
-        settings.displayZoomControls = false
+        /* REMOVE FOOTER */
+        footer,
+        .footer,
+        .footer-outer,
+        .footer-inner,
+        .footer-section,
+        .credit,
+        .copyright,
+        .Attribution,
+        .Attribution1,
+        .Attribution2,
 
-        // "Disfarça" o app como um navegador Chrome
-        settings.userAgentString =
-            "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+        /* REMOVE NAVBAR BLOGGER */
+        #navbar,
+        #navbar-iframe,
+        .navbar,
+        .navbar-iframe
 
-        // CSS/JS atualizado para incluir a remoção da barra cinza e pesquisa
-        val hideLoginScript = """
-            javascript:(function() {
-                var style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = `
-                    /* 1. Esconde a barra cinza oficial do Blogger (Navbar) */
-                    #navbar, .navbar, #navbar-iframe, .navbar-iframe,
-                    
-                    /* 2. Esconde o cabeçalho cinza e a barra de pesquisa */
-                    .header-outer, .header-cap, .Search, #search, .search-bar, .search-tab,
-                    
-                    /* 3. Esconde a seção de comentários e login (o que você já tinha) */
-                    #comments, .comments, #comment-holder, #comment-editor,
-                    .comment-form, #cmt_iframe_holder, .comment-thread,
-                    iframe[src*="blogger.com/comment"],
-                    iframe[src*="accounts.google.com"],
-                    #credential_picker_container {
-                        display: none !important;
-                        visibility: hidden !important;
-                        height: 0 !important;
-                    }
-
-                    /* Remove espaços extras que sobram no topo */
-                    body { padding-top: 0 !important; margin-top: 0 !important; }
-                    .main-outer { margin-top: 0 !important; }
-                `;
-                document.head.appendChild(style);
-
-                // Função para remover elementos via código também
-                function cleanBlogger() {
-                    var selectors = ['#navbar', '.header-outer', '#comments', '.Search'];
-                    selectors.forEach(function(sel) {
-                        document.querySelectorAll(sel).forEach(function(el) {
-                            el.remove();
-                        });
-                    });
-                }
-                cleanBlogger();
-
-                var observer = new MutationObserver(cleanBlogger);
-                observer.observe(document.body, { childList: true, subtree: true });
-            })();
-        """.trimIndent()
-
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                if (url != null && (
-                            url.contains("accounts.google.com") ||
-                            url.contains("ServiceLogin") ||
-                            url.contains("/signin") ||
-                            url.contains("blogger.com/comment")
-                            )) {
-                    return true
-                }
-                return false
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                view?.evaluateJavascript(hideLoginScript, null)
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                view?.evaluateJavascript(hideLoginScript, null)
-            }
+        {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
         }
 
-        if (url != null) {
-            webView.loadUrl(url)
+        /* AJUSTA A PÁGINA */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
         }
-    }
 
-    override fun onBackPressed() {
-        val webView: WebView = findViewById(R.id.webView)
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
+        .main-wrapper,
+        .main-inner,
+        .content-outer,
+        .content-inner,
+        .post-outer,
+        .post,
+        .post-body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
-    }
-}
+
+        img {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        `;
+        
+        document.head.appendChild(style);
+
+        function removeElements() {
+            var selectors = [
+                'header',
+                '.header-outer',
+                '.mobile-header',
+                '.search',
+                '.search-bar',
+                '.share-buttons',
+                '.sharing',
+                '#comments',
+                'footer',
+                '.footer',
+                '.Attribution',
+                '#navbar',
+                '#navbar-iframe'
+            ];
+
+            selectors.forEach(function(selector) {
+                document.querySelectorAll(selector).forEach(function(el) {
+                    el.remove();
+                });
+            });
+        }
+
+        removeElements();
+
+        var observer = new MutationObserver(function() {
+            removeElements();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+    })();
+""".trimIndent()
