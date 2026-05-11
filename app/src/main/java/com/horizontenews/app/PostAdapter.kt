@@ -1,5 +1,6 @@
 package com.horizontenews.app
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,13 +29,13 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = posts[position]
         
-        // Configura o Título
+        // 1. Define o Título
         holder.title.text = post.title
         
-        // Configura a Categoria (se o post tiver etiquetas, pegamos a primeira)
+        // 2. Define a Categoria
         holder.category.text = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
         
-        // Configura a Data formatada (Ex: 11/05/2026)
+        // 3. Formata a Data
         try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
             val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -44,7 +45,7 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
             holder.date.text = post.published
         }
         
-        // Pega a imagem do conteúdo HTML
+        // 4. Carrega a Imagem
         val document = Jsoup.parse(post.content)
         val imageUrl = document.select("img").firstOrNull()?.attr("src")
 
@@ -53,6 +54,20 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
             .placeholder(android.R.color.darker_gray)
             .centerCrop()
             .into(holder.image)
+
+        // --- 5. AÇÃO DE CLIQUE: O QUE ESTAVA FALTANDO ---
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            
+            // Criamos a Intent para abrir a DetailActivity
+            val intent = Intent(context, DetailActivity::class.java)
+            
+            // Passamos a URL da notícia para a próxima tela
+            intent.putExtra("postUrl", post.url)
+            
+            // Iniciamos a transição de tela
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount() = posts.size
