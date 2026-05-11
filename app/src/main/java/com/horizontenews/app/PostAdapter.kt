@@ -15,14 +15,15 @@ import java.util.Locale
 class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.postTitle)
-        val image: ImageView = view.findViewById(R.id.postImage)
         val category: TextView = view.findViewById(R.id.postCategory)
+        val title: TextView = view.findViewById(R.id.postTitle)
         val date: TextView = view.findViewById(R.id.postDate)
+        val image: ImageView = view.findViewById(R.id.postImage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_post, parent, false)
         return ViewHolder(view)
     }
 
@@ -34,6 +35,7 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
         val categoryText = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
         holder.category.text = categoryText
 
+        // Formata data
         val formattedDate: String = try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
             val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -44,15 +46,17 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
         }
         holder.date.text = formattedDate
 
+        // Extrai primeira imagem
         val document = Jsoup.parse(post.content)
         val imageUrl = document.select("img").firstOrNull()?.attr("src")
 
         Glide.with(holder.itemView.context)
             .load(imageUrl)
-            .placeholder(android.R.color.darker_gray)
+            .placeholder(R.drawable.placeholder_image) // crie esse drawable depois
             .centerCrop()
             .into(holder.image)
 
+        // Clique abre detalhe
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, DetailActivity::class.java).apply {
