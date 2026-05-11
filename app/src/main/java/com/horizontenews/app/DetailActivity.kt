@@ -29,71 +29,53 @@ class DetailActivity : AppCompatActivity() {
         settings.userAgentString =
             "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
 
-        // CSS/JS que escondem a seção de comentários e o botão de login do Blogger
+        // CSS/JS atualizado para incluir a remoção da barra cinza e pesquisa
         val hideLoginScript = """
             javascript:(function() {
                 var style = document.createElement('style');
                 style.type = 'text/css';
                 style.innerHTML = `
-                    /* Esconde a seção de comentários do Blogger */
-                    #comments,
-                    .comments,
-                    #comment-holder,
-                    #comment-editor,
-                    #comment-editor-src,
-                    .comment-form,
-                    #cmt_iframe_holder,
-                    .comment-thread,
-                    .comments-content,
-                    #blogger-iframe-colorize,
+                    /* 1. Esconde a barra cinza oficial do Blogger (Navbar) */
+                    #navbar, .navbar, #navbar-iframe, .navbar-iframe,
+                    
+                    /* 2. Esconde o cabeçalho cinza e a barra de pesquisa */
+                    .header-outer, .header-cap, .Search, #search, .search-bar, .search-tab,
+                    
+                    /* 3. Esconde a seção de comentários e login (o que você já tinha) */
+                    #comments, .comments, #comment-holder, #comment-editor,
+                    .comment-form, #cmt_iframe_holder, .comment-thread,
                     iframe[src*="blogger.com/comment"],
                     iframe[src*="accounts.google.com"],
-                    iframe[src*="gsi"],
-                    div[id*="comment"],
-                    /* Botões/links de login genéricos */
-                    a[href*="accounts.google.com"],
-                    a[href*="ServiceLogin"],
-                    a[href*="signin"],
-                    a[href*="login"],
-                    button[id*="login"],
-                    button[class*="login"],
-                    .login-button,
-                    .g-signin,
-                    .g_id_signin,
                     #credential_picker_container {
                         display: none !important;
                         visibility: hidden !important;
                         height: 0 !important;
-                        width: 0 !important;
-                        overflow: hidden !important;
                     }
+
+                    /* Remove espaços extras que sobram no topo */
+                    body { padding-top: 0 !important; margin-top: 0 !important; }
+                    .main-outer { margin-top: 0 !important; }
                 `;
                 document.head.appendChild(style);
 
-                // Remove via JS também (caso CSS não pegue)
-                function removeLoginElements() {
-                    var selectors = [
-                        '#comments', '.comments', '#comment-holder',
-                        '#comment-editor', '.comment-form', '#cmt_iframe_holder'
-                    ];
+                // Função para remover elementos via código também
+                function cleanBlogger() {
+                    var selectors = ['#navbar', '.header-outer', '#comments', '.Search'];
                     selectors.forEach(function(sel) {
                         document.querySelectorAll(sel).forEach(function(el) {
                             el.remove();
                         });
                     });
                 }
-                removeLoginElements();
+                cleanBlogger();
 
-                // Observa mudanças dinâmicas
-                var observer = new MutationObserver(removeLoginElements);
+                var observer = new MutationObserver(cleanBlogger);
                 observer.observe(document.body, { childList: true, subtree: true });
             })();
         """.trimIndent()
 
         webView.webViewClient = object : WebViewClient() {
-
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                // Bloqueia abrir URLs de login do Google
                 if (url != null && (
                             url.contains("accounts.google.com") ||
                             url.contains("ServiceLogin") ||
@@ -107,17 +89,11 @@ class DetailActivity : AppCompatActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                // Injeta o script depois que a página termina de carregar
                 view?.evaluateJavascript(hideLoginScript, null)
             }
 
-            override fun onPageStarted(
-                view: WebView?,
-                url: String?,
-                favicon: android.graphics.Bitmap?
-            ) {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                 super.onPageStarted(view, url, favicon)
-                // Injeta o CSS o quanto antes
                 view?.evaluateJavascript(hideLoginScript, null)
             }
         }
@@ -129,7 +105,6 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val webView: WebView = findViewById(R.id.webView)
-
         if (webView.canGoBack()) {
             webView.goBack()
         } else {
