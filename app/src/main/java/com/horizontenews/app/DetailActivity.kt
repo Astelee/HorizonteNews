@@ -1,4 +1,4 @@
-"package com.horizontenews.app
+package com.horizontenews.app
 
 import android.os.Bundle
 import android.webkit.WebSettings
@@ -14,7 +14,7 @@ class DetailActivity : AppCompatActivity() {
         val webView: WebView = findViewById(R.id.webView)
 
         // Recupera o link enviado pelo Adapter
-        val url = intent.getStringExtra(\"postUrl\")
+        val url = intent.getStringExtra("postUrl")
 
         // Configurações avançadas para o WebView
         val settings = webView.settings
@@ -25,12 +25,12 @@ class DetailActivity : AppCompatActivity() {
         settings.builtInZoomControls = true
         settings.displayZoomControls = false
 
-        // \"Disfarça\" o app como um navegador Chrome
+        // "Disfarça" o app como um navegador Chrome
         settings.userAgentString =
-            \"Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36\"
+            "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
 
         // CSS/JS que escondem a seção de comentários e o botão de login do Blogger
-        val hideLoginScript = \"\"\"
+        val hideLoginScript = """
             javascript:(function() {
                 var style = document.createElement('style');
                 style.type = 'text/css';
@@ -46,17 +46,17 @@ class DetailActivity : AppCompatActivity() {
                     .comment-thread,
                     .comments-content,
                     #blogger-iframe-colorize,
-                    iframe[src*=\"blogger.com/comment\"],
-                    iframe[src*=\"accounts.google.com\"],
-                    iframe[src*=\"gsi\"],
-                    div[id*=\"comment\"],
+                    iframe[src*="blogger.com/comment"],
+                    iframe[src*="accounts.google.com"],
+                    iframe[src*="gsi"],
+                    div[id*="comment"],
                     /* Botões/links de login genéricos */
-                    a[href*=\"accounts.google.com\"],
-                    a[href*=\"ServiceLogin\"],
-                    a[href*=\"signin\"],
-                    a[href*=\"login\"],
-                    button[id*=\"login\"],
-                    button[class*=\"login\"],
+                    a[href*="accounts.google.com"],
+                    a[href*="ServiceLogin"],
+                    a[href*="signin"],
+                    a[href*="login"],
+                    button[id*="login"],
+                    button[class*="login"],
                     .login-button,
                     .g-signin,
                     .g_id_signin,
@@ -83,20 +83,24 @@ class DetailActivity : AppCompatActivity() {
                     });
                 }
                 removeLoginElements();
+
                 // Observa mudanças dinâmicas
                 var observer = new MutationObserver(removeLoginElements);
                 observer.observe(document.body, { childList: true, subtree: true });
             })();
-        \"\"\".trimIndent()
+        """.trimIndent()
 
         webView.webViewClient = object : WebViewClient() {
+
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 // Bloqueia abrir URLs de login do Google
-                if (url != null && (url.contains(\"accounts.google.com\") ||
-                            url.contains(\"ServiceLogin\") ||
-                            url.contains(\"/signin\") ||
-                            url.contains(\"blogger.com/comment\"))) {
-                    return true // cancela o carregamento
+                if (url != null && (
+                            url.contains("accounts.google.com") ||
+                            url.contains("ServiceLogin") ||
+                            url.contains("/signin") ||
+                            url.contains("blogger.com/comment")
+                            )) {
+                    return true
                 }
                 return false
             }
@@ -107,9 +111,13 @@ class DetailActivity : AppCompatActivity() {
                 view?.evaluateJavascript(hideLoginScript, null)
             }
 
-            override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+            override fun onPageStarted(
+                view: WebView?,
+                url: String?,
+                favicon: android.graphics.Bitmap?
+            ) {
                 super.onPageStarted(view, url, favicon)
-                // Injeta o CSS o quanto antes para evitar o \"flash\" do botão
+                // Injeta o CSS o quanto antes
                 view?.evaluateJavascript(hideLoginScript, null)
             }
         }
@@ -121,6 +129,7 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val webView: WebView = findViewById(R.id.webView)
+
         if (webView.canGoBack()) {
             webView.goBack()
         } else {
