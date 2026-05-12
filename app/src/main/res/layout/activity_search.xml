@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#FFFFFF">
 
     <LinearLayout
+        android:id="@+id/layout_top_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
@@ -34,6 +34,8 @@
     </LinearLayout>
 
     <View 
+        android:id="@+id/divider"
+        android:layout_below="@id/layout_top_bar"
         android:layout_width="match_parent" 
         android:layout_height="1dp" 
         android:background="#EEEEEE"/>
@@ -41,25 +43,29 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_search_results"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@id/divider"
+        android:layout_above="@+id/layout_social_bottom"
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/layout_social"
+        android:id="@+id/layout_social_bottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="20dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:background="#FDFDFD">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Siga o Horizonte News"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="13sp"
+            android:textColor="#999999"
+            android:layout_marginBottom="16dp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -68,14 +74,35 @@
 
             <ImageButton
                 android:id="@+id/btn_insta"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_margin="10dp"
-                android:scaleType="centerInside"
-                android:src="@android:drawable/ic_menu_camera" 
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_camera"
+                android:tint="#E4405F"
+                android:scaleType="fitCenter"/>
 
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/btn_whatsapp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/stat_sys_phone_call"
+                android:tint="#25D366"
+                android:scaleType="fitCenter"/>
+
+            <ImageButton
+                android:id="@+id/btn_facebook"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_share"
+                android:tint="#1877F2"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
