@@ -1,92 +1,71 @@
-package com.horizontenews.app
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
 
-import android.content.Intent
-import android.os.Bundle
-import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="#F29121" />
 
-class MainActivity : AppCompatActivity() {
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        app:contentInsetStart="0dp">
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="HORIZONTE NEWS"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
 
-        // Configura a barra superior (Toolbar)
-        setupToolbar()
+            <ImageButton
+                android:id="@+id/btn_open_search"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_search_black"
+                android:tint="#000000"
+                app:tint="#000000" />
 
-        // Inicializa os componentes da tela principal
-        recyclerView = findViewById(R.id.recyclerView)
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+        </RelativeLayout>
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
+    </androidx.appcompat.widget.Toolbar>
 
-        // Configura o botão da lupa para abrir a tela de pesquisa
-        // Agora usando a lupa preta (ic_search_black) definida no XML
-        val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        btnOpenSearch.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
 
-        // Estilo do carregamento (Laranja do Horizonte News)
-        // Usamos o código hexadecimal direto para evitar erros caso o colors.xml falhe
-        swipeRefreshLayout.setColorSchemeColors(android.graphics.Color.parseColor("#F29121"))
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        swipeRefreshLayout.setOnRefreshListener {
-            fetchPosts()
-        }
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:clipToPadding="false" />
 
-        // Carrega as notícias ao abrir o app
-        fetchPosts()
-    }
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    private fun fetchPosts() {
-        // Inicia a animação de carregamento (o círculo girando)
-        swipeRefreshLayout.isRefreshing = true
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.googleapis.com/blogger/v3/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(BloggerService::class.java)
-
-        // Busca as notícias no Blogger usando as chaves de configuração
-        service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
-            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                swipeRefreshLayout.isRefreshing = false
-                if (response.isSuccessful) {
-                    val posts = response.body()?.items ?: emptyList()
-                    recyclerView.adapter = PostAdapter(posts)
-                }
-            }
-
-            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // Para a animação mesmo em caso de erro de conexão ou internet
-                swipeRefreshLayout.isRefreshing = false
-            }
-        })
-    }
-
-    private fun setupToolbar() {
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        
-        // Remove o título padrão para usar o "HORIZONTE NEWS" personalizado do seu XML
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // Define a cor da barra de status (onde fica o relógio e bateria) como Laranja
-        window.statusBarColor = android.graphics.Color.parseColor("#F29121")
-    }
-}
+</LinearLayout>
