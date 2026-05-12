@@ -1,65 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+package com.horizontenews.app
 
-    <LinearLayout
-        android:id="@+id/search_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center_vertical">
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-        <EditText
-            android:id="@+id/edit_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Pesquisar notícias..."
-            android:background="@drawable/search_background"
-            android:padding="12dp" />
+class SearchActivity : AppCompatActivity() {
 
-        <ImageButton
-            android:id="@+id/btn_do_search"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_search"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-    </LinearLayout>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_search)
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_header"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical"
-        android:gravity="center">
+        val editSearch = findViewById<EditText>(R.id.edit_search)
+        val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
+        val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
+        val layoutSocial = findViewById<LinearLayout>(R.id.layout_social)
+        val recyclerResults = findViewById<RecyclerView>(R.id.recycler_search_results)
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Siga-nos"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp"/>
+        recyclerResults.layoutManager = LinearLayoutManager(this)
 
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:columnCount="4"
-            android:alignmentMode="alignMargins">
+        btnBack.setOnClickListener { finish() }
 
-            <ImageButton
-                android:id="@+id/btn_instagram"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_instagram" 
-                android:background="?attr/selectableItemBackgroundBorderless" />
-            
-            </GridLayout>
-    </LinearLayout>
+        btnInsta.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/horizontenews"))
+            startActivity(intent)
+        }
 
-</RelativeLayout>
+        editSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = editSearch.text.toString()
+                if (query.isNotEmpty()) {
+                    layoutSocial.visibility = View.GONE
+                    recyclerResults.visibility = View.VISIBLE
+                    realizarBusca(query, recyclerResults)
+                }
+                true
+            } else false
+        }
+    }
+
+    private fun realizarBusca(query: String, recyclerView: RecyclerView) {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.googleapis.com/blogger/v3/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(BloggerService::class.java)
+        
+        service.searchPosts(Config.BLOG_ID, Config.API_KEY, query).enqueue(object : Callback<PostResponse> {
+            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                if (response.isSuccessful) {
+                    val posts = response.body()?.items ?: emptyList()
+                    recyclerView.adapter = PostAdapter(posts)
+                }
+            }
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {}
+        })
+    }
+}
