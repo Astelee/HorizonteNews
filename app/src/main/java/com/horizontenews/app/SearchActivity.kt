@@ -26,6 +26,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        // Vinculando os componentes com os IDs exatos do XML
         recyclerView = findViewById(R.id.recyclerViewSearch)
         editSearch = findViewById(R.id.edit_search)
         layoutSocial = findViewById(R.id.layout_social_bottom)
@@ -33,31 +34,36 @@ class SearchActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
         val btnDoSearch = findViewById<ImageButton>(R.id.btn_do_search)
         
-        // Botões de Redes Sociais
         val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
         val btnWhats = findViewById<ImageButton>(R.id.btn_whatsapp)
         val btnFace = findViewById<ImageButton>(R.id.btn_facebook)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Configuração dos botões
         btnBack.setOnClickListener { finish() }
 
-        // Configuração dos Links
         btnInsta.setOnClickListener { abrirLink("https://www.instagram.com/horizontenews_/") }
         btnWhats.setOnClickListener { abrirLink("https://wa.me/5585992823610") }
         btnFace.setOnClickListener { abrirLink("https://www.facebook.com/profile.php?id=61559143715206") }
 
         btnDoSearch.setOnClickListener {
-            val query = editSearch.text.toString()
+            val query = editSearch.text.toString().trim()
             if (query.isNotEmpty()) {
                 performSearch(query)
+            } else {
+                Toast.makeText(this, "Digite algo para buscar", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun abrirLink(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Erro ao abrir link", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun performSearch(query: String) {
@@ -83,7 +89,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                Toast.makeText(this@SearchActivity, "Erro na busca", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SearchActivity, "Erro na conexão", Toast.LENGTH_SHORT).show()
             }
         })
     }
