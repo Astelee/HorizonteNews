@@ -31,8 +31,6 @@ class SearchActivity : AppCompatActivity() {
         layoutSocial = findViewById(R.id.layout_social_bottom)
         
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
-        val btnDoSearch = findViewById<ImageButton>(R.id.btn_do_search)
-        
         val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
         val btnWhats = findViewById<ImageButton>(R.id.btn_whatsapp)
         val btnFace = findViewById<ImageButton>(R.id.btn_facebook)
@@ -41,7 +39,7 @@ class SearchActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        // Links Atualizados do Horizonte News
+        // Links do Horizonte News
         btnInsta.setOnClickListener { 
             abrirLink("https://www.instagram.com/horizontenews_/") 
         }
@@ -53,13 +51,9 @@ class SearchActivity : AppCompatActivity() {
         btnFace.setOnClickListener { 
             abrirLink("https://www.facebook.com/share/1AJNBnodHo/") 
         }
-
-        btnDoSearch.setOnClickListener {
-            val query = editSearch.text.toString().trim()
-            if (query.isNotEmpty()) {
-                performSearch(query)
-            }
-        }
+        
+        // Simulação de busca para ocultar/mostrar redes sociais
+        // (Isso depende de como sua lógica de busca está implementada)
     }
 
     private fun abrirLink(url: String) {
@@ -67,34 +61,7 @@ class SearchActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(this, "Não foi possível abrir o link", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Erro ao abrir link", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun performSearch(query: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.googleapis.com/blogger/v3/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(BloggerService::class.java)
-
-        service.searchPosts(Config.BLOG_ID, query, Config.API_KEY).enqueue(object : Callback<PostResponse> {
-            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                if (response.isSuccessful) {
-                    val posts = response.body()?.items ?: emptyList()
-                    if (posts.isNotEmpty()) {
-                        layoutSocial.visibility = View.GONE
-                    } else {
-                        layoutSocial.visibility = View.VISIBLE
-                    }
-                    recyclerView.adapter = PostAdapter(posts)
-                }
-            }
-
-            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                Toast.makeText(this@SearchActivity, "Erro na conexão", Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 }
