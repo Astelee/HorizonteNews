@@ -9,7 +9,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_height="4dp"
         android:background="#F29121" />
 
     <androidx.appcompat.widget.Toolbar
@@ -49,6 +48,11 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -57,7 +61,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:clipToPadding="false" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
