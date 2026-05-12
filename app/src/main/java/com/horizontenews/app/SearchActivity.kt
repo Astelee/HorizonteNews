@@ -1,35 +1,40 @@
 package com.horizontenews.app
 
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var editSearch: EditText
+    private lateinit var layoutSocial: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Inicializa componentes
         recyclerView = findViewById(R.id.recyclerViewSearch)
         editSearch = findViewById(R.id.edit_search)
+        layoutSocial = findViewById(R.id.layout_social_bottom)
+        
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
         val btnDoSearch = findViewById<ImageButton>(R.id.btn_do_search)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Botão voltar
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        // Botão que executa a busca
         btnDoSearch.setOnClickListener {
             val query = editSearch.text.toString()
             if (query.isNotEmpty()) {
@@ -39,6 +44,29 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
-        // Aqui vai a sua lógica de busca no Blogger futuramente
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.googleapis.com/blogger/v3/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(BloggerService::class.java)
+
+        service.searchPosts(Config.BLOG_ID, query, Config.API_KEY).enqueue(object : Callback<PostResponse> {
+            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                if (response.isSuccessful) {
+                    val posts = response.body()?.items ?: emptyList()
+                    if (posts.isEmpty()) {
+                        Toast.makeText(this@SearchActivity, "Nenhuma notícia encontrada", Toast.LENGTH_SHORT).show()
+                    } else {
+                        layoutSocial.visibility = View.GONE // Esconde redes sociais se achar algo
+                    }
+                    recyclerView.adapter = PostAdapter(posts)
+                }
+            }
+
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                Toast.makeText(this@SearchActivity, "Erro ao buscar", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
