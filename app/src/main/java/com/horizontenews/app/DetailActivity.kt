@@ -1,137 +1,53 @@
 package com.horizontenews.app
 
-import android.content.Intent
 import android.os.Bundle
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import com.bumptech.glide.Glide
 
 class DetailActivity : AppCompatActivity() {
-
-    private lateinit var webView: WebView
-    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        toolbar = findViewById(R.id.toolbar)
-        webView = findViewById(R.id.webView)
+        // Pegando os dados enviados pela MainActivity
+        val title = intent.getStringExtra("postTitle") ?: ""
+        val content = intent.getStringExtra("postContent") ?: ""
+        val image = intent.getStringExtra("postImage") ?: ""
+        val date = intent.getStringExtra("postDate") ?: ""
 
-        // Configura a Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // --- NOVAS ALTERAÇÕES: BOTÕES DA TOOLBAR ---
-
-        // Botão Voltar (Seta)
-        val btnVoltar = findViewById<ImageButton>(R.id.btn_voltar)
-        btnVoltar.setOnClickListener {
-            finish() // Fecha a tela atual e volta para a lista
-        }
-
-        // Botão Compartilhar
+        // Vinculando os componentes do XML
+        val tvTitle = findViewById<TextView>(R.id.postTitleDetail)
+        val tvContent = findViewById<TextView>(R.id.postContentDetail)
+        val tvDate = findViewById<TextView>(R.id.postDateDetail)
+        val ivImage = findViewById<ImageView>(R.id.postImageDetail)
+        val btnBack = findViewById<ImageButton>(R.id.btn_back)
         val btnShare = findViewById<ImageButton>(R.id.btn_share)
-        
-        // Recebe os dados da notícia
-        val postTitle    = intent.getStringExtra("postTitle")    ?: ""
-        val postContent  = intent.getStringExtra("postContent")  ?: ""
-        val postDate     = intent.getStringExtra("postDate")     ?: ""
-        val postCategory = intent.getStringExtra("postCategory") ?: "NOTÍCIA"
 
-        btnShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            // Mensagem que será enviada
-            val shareMessage = "Confira esta notícia no Horizonte News: $postTitle"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
-            startActivity(Intent.createChooser(shareIntent, "Compartilhar via"))
+        // Preenchendo os dados
+        tvTitle.text = title
+        tvContent.text = content
+        tvDate.text = date
+        
+        Glide.with(this)
+            .load(image)
+            .placeholder(android.R.color.darker_gray)
+            .into(ivImage)
+
+        // Configurando o botão de voltar
+        btnBack.setOnClickListener {
+            finish()
         }
 
-        // --- FIM DAS ALTERAÇÕES ---
-
-        // Configurações do WebView
-        val settings: WebSettings = webView.settings
-        settings.javaScriptEnabled = false
-        settings.loadsImagesAutomatically = true
-        settings.useWideViewPort = true
-        settings.loadWithOverviewMode = true
-        settings.setSupportZoom(false)
-
-        webView.webViewClient = WebViewClient()
-
-        // HTML moderno e limpo
-        val htmlContent = """
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body {
-                        font-family: -apple-system, system-ui, sans-serif;
-                        background: #ffffff;
-                        color: #1a1a1a;
-                        line-height: 1.75;
-                        font-size: 16.5px;
-                        padding: 20px 16px;
-                    }
-                    .category {
-                        color: #FF9800;
-                        font-size: 13px;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        letter-spacing: 1.2px;
-                        margin-bottom: 8px;
-                    }
-                    h1 {
-                        font-size: 24px;
-                        font-weight: 800;
-                        line-height: 1.25;
-                        margin-bottom: 12px;
-                        color: #111111;
-                    }
-                    .date {
-                        font-size: 14px;
-                        color: #777777;
-                        margin-bottom: 28px;
-                        padding-bottom: 16px;
-                        border-bottom: 1px solid #eeeeee;
-                    }
-                    .content img {
-                        max-width: 100% !important;
-                        height: auto !important;
-                        border-radius: 12px;
-                        margin: 20px 0;
-                        display: block;
-                    }
-                    .content p { margin-bottom: 18px; }
-                    .content a { color: #FF9800; text-decoration: none; }
-                </style>
-            </head>
-            <body>
-                <div class="category">$postCategory</div>
-                <h1>$postTitle</h1>
-                <div class="date">$postDate</div>
-                <div class="content">$postContent</div>
-            </body>
-            </html>
-        """.trimIndent()
-
-        webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
-    }
-
-    // Botão voltar físico
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
+        // Configurando o botão de compartilhar
+        btnShare.setOnClickListener {
+            val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "$title\n\nLeia mais no Horizonte News")
+            startActivity(android.content.Intent.createChooser(shareIntent, "Compartilhar notícia"))
         }
     }
 }
