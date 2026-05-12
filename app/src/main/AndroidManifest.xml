@@ -26,6 +26,11 @@
             android:name="com.horizontenews.app.DetailActivity"
             android:exported="false" />
 
+        <activity
+            android:name="com.horizontenews.app.SearchActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>
