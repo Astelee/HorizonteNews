@@ -22,34 +22,37 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Configura a barra superior (Toolbar)
         setupToolbar()
 
         // Inicializa os componentes da tela principal
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Configura o botão da lupa para abrir a tela de pesquisa
-        // O uso do "?" garante que o app não pare se o ID não for achado no XML
+        // Agora usando a lupa preta (ic_search_black) definida no XML
         val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        btnOpenSearch?.setOnClickListener {
+        btnOpenSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
 
-        // Estilo do carregamento (Cores do Horizonte News)
-        swipeRefreshLayout.setColorSchemeResources(R.color.orange_news)
+        // Estilo do carregamento (Laranja do Horizonte News)
+        // Usamos o código hexadecimal direto para evitar erros caso o colors.xml falhe
+        swipeRefreshLayout.setColorSchemeColors(android.graphics.Color.parseColor("#F29121"))
 
         swipeRefreshLayout.setOnRefreshListener {
             fetchPosts()
         }
 
+        // Carrega as notícias ao abrir o app
         fetchPosts()
     }
 
     private fun fetchPosts() {
-        // Inicia a animação de carregamento
+        // Inicia a animação de carregamento (o círculo girando)
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -59,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         val service = retrofit.create(BloggerService::class.java)
 
-        // ALTERAÇÃO AQUI: Agora passamos Config.BLOG_ID e Config.API_KEY
+        // Busca as notícias no Blogger usando as chaves de configuração
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 swipeRefreshLayout.isRefreshing = false
@@ -70,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // Para a animação mesmo em caso de erro de conexão
+                // Para a animação mesmo em caso de erro de conexão ou internet
                 swipeRefreshLayout.isRefreshing = false
             }
         })
@@ -79,9 +82,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        
+        // Remove o título padrão para usar o "HORIZONTE NEWS" personalizado do seu XML
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Define a cor da barra de status superior
-        window.statusBarColor = getColor(R.color.orange_news)
+        // Define a cor da barra de status (onde fica o relógio e bateria) como Laranja
+        window.statusBarColor = android.graphics.Color.parseColor("#F29121")
     }
 }
