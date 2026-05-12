@@ -6,28 +6,42 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Header Laranja -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/orange_news" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:background="@color/orange_news"
-        android:elevation="4dp"
-        app:titleTextColor="#FFFFFF">
+        android:layout_height="56dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        app:contentInsetStart="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="HORIZONTE NEWS"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.5" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="HORIZONTE NEWS"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+        </RelativeLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Lista de Notícias -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
