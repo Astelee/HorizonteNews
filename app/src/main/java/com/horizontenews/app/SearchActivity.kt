@@ -26,18 +26,31 @@ class SearchActivity : AppCompatActivity() {
         val editSearch = findViewById<EditText>(R.id.edit_search)
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
         val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
-        val layoutSocial = findViewById<LinearLayout>(R.id.layout_social)
+        val btnWhatsapp = findViewById<ImageButton>(R.id.btn_whatsapp)
+        val btnFacebook = findViewById<ImageButton>(R.id.btn_facebook)
+        val layoutSocial = findViewById<LinearLayout>(R.id.layout_social_bottom)
         val recyclerResults = findViewById<RecyclerView>(R.id.recycler_search_results)
 
         recyclerResults.layoutManager = LinearLayoutManager(this)
 
         btnBack.setOnClickListener { finish() }
 
+        // Link Instagram Oficial
         btnInsta.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/horizontenews"))
-            startActivity(intent)
+            abrirLink("https://www.instagram.com/horizontenews?igsh=MTJwdnd6bmE5amdseg==")
         }
 
+        // Link WhatsApp Oficial
+        btnWhatsapp.setOnClickListener {
+            abrirLink("https://wa.me/5585994130806")
+        }
+
+        // Link Facebook Oficial
+        btnFacebook.setOnClickListener {
+            abrirLink("https://www.facebook.com/HorizonteNews")
+        }
+
+        // Lógica da pesquisa
         editSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = editSearch.text.toString()
@@ -48,6 +61,15 @@ class SearchActivity : AppCompatActivity() {
                 }
                 true
             } else false
+        }
+    }
+
+    private fun abrirLink(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            // Caso o usuário não tenha o app instalado ou o link falhe
         }
     }
 
@@ -66,9 +88,7 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
-            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // Erro de rede
-            }
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {}
         })
     }
 }
