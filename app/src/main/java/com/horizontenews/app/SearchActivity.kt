@@ -66,7 +66,9 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
-            override fun onFailure(call: Call<PostResponse>, t: Throwable) {}
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                // Erro de rede
+            }
         })
     }
 }
