@@ -31,7 +31,7 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="12dp"
-                android:src="@androidx.appcompat.drawable.abc_ic_ab_back_material"
+                android:src="@android:drawable/ic_menu_revert"
                 android:tint="@android:color/black" />
 
             <TextView
