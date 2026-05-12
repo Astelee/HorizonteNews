@@ -1,9 +1,11 @@
 package com.horizontenews.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
@@ -23,11 +25,33 @@ class DetailActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        // --- NOVAS ALTERAÇÕES: BOTÕES DA TOOLBAR ---
+
+        // Botão Voltar (Seta)
+        val btnVoltar = findViewById<ImageButton>(R.id.btn_voltar)
+        btnVoltar.setOnClickListener {
+            finish() // Fecha a tela atual e volta para a lista
+        }
+
+        // Botão Compartilhar
+        val btnShare = findViewById<ImageButton>(R.id.btn_share)
+        
         // Recebe os dados da notícia
         val postTitle    = intent.getStringExtra("postTitle")    ?: ""
         val postContent  = intent.getStringExtra("postContent")  ?: ""
         val postDate     = intent.getStringExtra("postDate")     ?: ""
         val postCategory = intent.getStringExtra("postCategory") ?: "NOTÍCIA"
+
+        btnShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            // Mensagem que será enviada
+            val shareMessage = "Confira esta notícia no Horizonte News: $postTitle"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar via"))
+        }
+
+        // --- FIM DAS ALTERAÇÕES ---
 
         // Configurações do WebView
         val settings: WebSettings = webView.settings
@@ -57,7 +81,7 @@ class DetailActivity : AppCompatActivity() {
                         padding: 20px 16px;
                     }
                     .category {
-                        color: #E87722;
+                        color: #FF9800;
                         font-size: 13px;
                         font-weight: 700;
                         text-transform: uppercase;
@@ -86,7 +110,7 @@ class DetailActivity : AppCompatActivity() {
                         display: block;
                     }
                     .content p { margin-bottom: 18px; }
-                    .content a { color: #E87722; text-decoration: none; }
+                    .content a { color: #FF9800; text-decoration: none; }
                 </style>
             </head>
             <body>
@@ -101,11 +125,12 @@ class DetailActivity : AppCompatActivity() {
         webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
     }
 
-    // Botão voltar físico + botão na toolbar
+    // Botão voltar físico
     override fun onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack()
         } else {
+            @Suppress("DEPRECATION")
             super.onBackPressed()
         }
     }
