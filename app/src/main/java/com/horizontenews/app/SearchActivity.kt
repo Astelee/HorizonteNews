@@ -26,7 +26,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Vinculando os componentes com os IDs exatos do XML
+        // IDs vinculados corretamente ao XML acima
         recyclerView = findViewById(R.id.recyclerViewSearch)
         editSearch = findViewById(R.id.edit_search)
         layoutSocial = findViewById(R.id.layout_social_bottom)
@@ -40,7 +40,6 @@ class SearchActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Configuração dos botões
         btnBack.setOnClickListener { finish() }
 
         btnInsta.setOnClickListener { abrirLink("https://www.instagram.com/horizontenews_/") }
@@ -51,19 +50,13 @@ class SearchActivity : AppCompatActivity() {
             val query = editSearch.text.toString().trim()
             if (query.isNotEmpty()) {
                 performSearch(query)
-            } else {
-                Toast.makeText(this, "Digite algo para buscar", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun abrirLink(url: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Erro ao abrir link", Toast.LENGTH_SHORT).show()
-        }
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun performSearch(query: String) {
@@ -81,15 +74,15 @@ class SearchActivity : AppCompatActivity() {
                     if (posts.isNotEmpty()) {
                         layoutSocial.visibility = View.GONE
                     } else {
-                        Toast.makeText(this@SearchActivity, "Nenhuma notícia encontrada", Toast.LENGTH_SHORT).show()
                         layoutSocial.visibility = View.VISIBLE
+                        Toast.makeText(this@SearchActivity, "Nada encontrado", Toast.LENGTH_SHORT).show()
                     }
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                Toast.makeText(this@SearchActivity, "Erro na conexão", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SearchActivity, "Erro na busca", Toast.LENGTH_SHORT).show()
             }
         })
     }
