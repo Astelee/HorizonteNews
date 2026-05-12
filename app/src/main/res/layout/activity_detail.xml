@@ -32,7 +32,6 @@
                 android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="Voltar"
                 app:tint="#000000" />
 
             <TextView
@@ -55,7 +54,6 @@
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_share"
-                android:contentDescription="Compartilhar"
                 app:tint="#000000" />
 
         </RelativeLayout>
@@ -78,15 +76,13 @@
                 android:text="CATEGORIA"
                 android:textColor="#F29121"
                 android:textSize="13sp"
-                android:textStyle="bold"
-                android:letterSpacing="0" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/postTitleDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Título da Notícia"
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -97,7 +93,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="12/05/2026"
                 android:textColor="#666666"
                 android:textSize="12sp" />
 
@@ -117,8 +112,7 @@
                     android:id="@+id/postImageDetail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@android:color/darker_gray" />
+                    android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -127,7 +121,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:lineSpacingExtra="6sp"
-                android:text="Carregando conteúdo..."
                 android:textColor="#333333"
                 android:textSize="16sp" />
 
