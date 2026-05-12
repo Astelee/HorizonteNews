@@ -6,20 +6,18 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BloggerService {
-
-    // Função para listar todas as notícias (Página Principal)
+    // Busca todos os posts da página inicial
     @GET("blogs/{blogId}/posts")
     fun getPosts(
-        @Path("blogId") blogId: String = Config.BLOG_ID,
+        @Path("blogId") blogId: String,
         @Query("key") apiKey: String
     ): Call<PostResponse>
 
-    // Função para pesquisar notícias (Tela de Busca)
+    // NOVA FUNÇÃO: Busca posts por palavra-chave (Lupa)
     @GET("blogs/{blogId}/posts/search")
     fun searchPosts(
-        @Path("blogId") blogId: String = Config.BLOG_ID,
-        @Query("key") apiKey: String,
-        @Query("q") query: String
+        @Path("blogId") blogId: String,
+        @Query("q") query: String,
+        @Query("key") apiKey: String
     ): Call<PostResponse>
-
 }
