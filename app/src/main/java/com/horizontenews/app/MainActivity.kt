@@ -24,20 +24,21 @@ class MainActivity : AppCompatActivity() {
 
         setupToolbar()
 
-        // Inicializa os componentes
+        // Inicializa os componentes da tela principal
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Configura o botão da lupa para abrir a tela de pesquisa
+        // O uso do "?" garante que o app não pare se o ID não for achado no XML
         val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        btnOpenSearch.setOnClickListener {
+        btnOpenSearch?.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
 
-        // Estilo do carregamento
+        // Estilo do carregamento (Cores do Horizonte News)
         swipeRefreshLayout.setColorSchemeResources(R.color.orange_news)
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
+        // Inicia a animação de carregamento
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -57,7 +59,8 @@ class MainActivity : AppCompatActivity() {
 
         val service = retrofit.create(BloggerService::class.java)
 
-        service.getPosts(Config.API_KEY).enqueue(object : Callback<PostResponse> {
+        // ALTERAÇÃO AQUI: Agora passamos Config.BLOG_ID e Config.API_KEY
+        service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
@@ -67,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                // Para a animação mesmo em caso de erro de conexão
                 swipeRefreshLayout.isRefreshing = false
             }
         })
@@ -76,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        // Define a cor da barra de status superior
         window.statusBarColor = getColor(R.color.orange_news)
     }
 }
