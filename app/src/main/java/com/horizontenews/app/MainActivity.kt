@@ -1,6 +1,8 @@
 package com.horizontenews.app
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,16 +24,23 @@ class MainActivity : AppCompatActivity() {
 
         setupToolbar()
 
-        // Inicializa os componentes
+        // Inicializa os componentes da tela principal
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Configura o botão da Lupa para abrir a tela de Pesquisa
+        val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
+        btnOpenSearch.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
         // Configura as cores do carregamento (Laranja do Horizonte News)
         swipeRefreshLayout.setColorSchemeResources(R.color.orange_news)
 
-        // Configura o que acontece ao puxar para baixo
+        // Configura o que acontece ao puxar para baixo (Swipe Refresh)
         swipeRefreshLayout.setOnRefreshListener {
             fetchPosts()
         }
@@ -41,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
-        // Mostra a bolinha de carregamento se não estiver aparecendo
+        // Mostra a bolinha de carregamento
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -53,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         service.getPosts(Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                // Para a animação de carregar
+                // Para a animação de carregar ao receber resposta
                 swipeRefreshLayout.isRefreshing = false
 
                 if (response.isSuccessful) {
@@ -63,9 +72,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // Para a animação de carregar mesmo se der erro
+                // Para a animação de carregar mesmo se houver falha de conexão
                 swipeRefreshLayout.isRefreshing = false
-                // TODO: Mostrar mensagem de erro ao usuário (ex: Toast ou Snackbar)
             }
         })
     }
@@ -75,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Cor da barra de status (onde fica a bateria/relógio)
+        // Define a cor da barra de status superior
         window.statusBarColor = getColor(R.color.orange_news)
     }
 }
