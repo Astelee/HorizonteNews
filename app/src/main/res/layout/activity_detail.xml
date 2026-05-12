@@ -4,19 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="#FFFFFF">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="#FF9800" />
+        android:background="#F29121" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@android:color/white"
-        android:elevation="2dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
         app:contentInsetStart="0dp">
 
         <RelativeLayout
@@ -24,23 +24,25 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/btn_voltar"
+                android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
                 android:src="@android:drawable/ic_menu_revert"
-                android:tint="@android:color/black" />
+                android:contentDescription="Voltar"
+                app:tint="#000000" />
 
             <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="HORIZONTE NEWS"
                 android:textColor="#000000"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1" />
 
@@ -52,23 +54,84 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
                 android:src="@android:drawable/ic_menu_share"
-                android:tint="@android:color/black" />
+                android:contentDescription="Compartilhar"
+                app:tint="#000000" />
 
         </RelativeLayout>
-
     </androidx.appcompat.widget.Toolbar>
 
-    <View
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EEEEEE" />
+        android:layout_height="match_parent">
 
-    <android.webkit.WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/postCategoryDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CATEGORIA"
+                android:textColor="#F29121"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0" />
+
+            <TextView
+                android:id="@+id/postTitleDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Título da Notícia"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="4sp" />
+
+            <TextView
+                android:id="@+id/postDateDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="12/05/2026"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="#EEEEEE" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/postImageDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@android:color/darker_gray" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/postContentDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="6sp"
+                android:text="Carregando conteúdo..."
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
