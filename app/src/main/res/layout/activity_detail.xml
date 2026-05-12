@@ -52,7 +52,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_share_black" />
+                android:src="@drawable/ic_share_black_custom" />
 
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
