@@ -37,7 +37,7 @@
                 android:paddingStart="8dp"
                 android:singleLine="true" />
 
-            </RelativeLayout>
+        </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
