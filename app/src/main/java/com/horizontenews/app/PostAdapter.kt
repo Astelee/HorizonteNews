@@ -32,6 +32,7 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
 
         holder.title.text = post.title
 
+        // Pega a primeira etiqueta do Blogger como categoria
         val categoryText = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
         holder.category.text = categoryText
 
@@ -46,28 +47,26 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
         }
         holder.date.text = formattedDate
 
-        // Extrai primeira imagem do conteúdo
+        // Extrai imagem
         val document = Jsoup.parse(post.content)
         val imageUrl = document.select("img").firstOrNull()?.attr("src")
 
-        // Carrega imagem com Glide
         Glide.with(holder.itemView.context)
             .load(imageUrl)
-            .placeholder(android.R.color.darker_gray)   // ← Corrigido
-            .error(android.R.color.darker_gray)         // ← Adicionado
+            .placeholder(android.R.color.darker_gray)
+            .error(android.R.color.darker_gray)
             .centerCrop()
             .into(holder.image)
 
-        // Clique abre a tela de detalhe
+        // Abre detalhes passando a categoria correta
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, DetailActivity::class.java).apply {
                 putExtra("postTitle", post.title)
                 putExtra("postContent", post.content)
                 putExtra("postDate", formattedDate)
-                putExtra("postCategory", categoryText)
+                putExtra("postCategory", categoryText) // Envia a categoria real
                 putExtra("postImage", imageUrl)
-                putExtra("postUrl", post.url)
             }
             context.startActivity(intent)
         }
