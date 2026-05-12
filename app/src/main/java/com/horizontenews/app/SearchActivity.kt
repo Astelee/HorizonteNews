@@ -1,5 +1,7 @@
 package com.horizontenews.app
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -30,10 +32,20 @@ class SearchActivity : AppCompatActivity() {
         
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
         val btnDoSearch = findViewById<ImageButton>(R.id.btn_do_search)
+        
+        // Botões de Redes Sociais
+        val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
+        val btnWhats = findViewById<ImageButton>(R.id.btn_whatsapp)
+        val btnFace = findViewById<ImageButton>(R.id.btn_facebook)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         btnBack.setOnClickListener { finish() }
+
+        // Configuração dos Links
+        btnInsta.setOnClickListener { abrirLink("https://www.instagram.com/horizontenews_/") }
+        btnWhats.setOnClickListener { abrirLink("https://wa.me/5585992823610") }
+        btnFace.setOnClickListener { abrirLink("https://www.facebook.com/profile.php?id=61559143715206") }
 
         btnDoSearch.setOnClickListener {
             val query = editSearch.text.toString()
@@ -41,6 +53,11 @@ class SearchActivity : AppCompatActivity() {
                 performSearch(query)
             }
         }
+    }
+
+    private fun abrirLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun performSearch(query: String) {
@@ -55,17 +72,18 @@ class SearchActivity : AppCompatActivity() {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
-                    if (posts.isEmpty()) {
-                        Toast.makeText(this@SearchActivity, "Nenhuma notícia encontrada", Toast.LENGTH_SHORT).show()
+                    if (posts.isNotEmpty()) {
+                        layoutSocial.visibility = View.GONE
                     } else {
-                        layoutSocial.visibility = View.GONE // Esconde redes sociais se achar algo
+                        Toast.makeText(this@SearchActivity, "Nenhuma notícia encontrada", Toast.LENGTH_SHORT).show()
+                        layoutSocial.visibility = View.VISIBLE
                     }
                     recyclerView.adapter = PostAdapter(posts)
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                Toast.makeText(this@SearchActivity, "Erro ao buscar", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SearchActivity, "Erro na busca", Toast.LENGTH_SHORT).show()
             }
         })
     }
