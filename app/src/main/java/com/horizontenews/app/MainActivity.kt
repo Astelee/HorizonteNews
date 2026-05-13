@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.firebase.messaging.FirebaseMessaging // Adicionado para notificações
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,6 +30,12 @@ class MainActivity : AppCompatActivity() {
 
         // 1. PEDIR PERMISSÃO PARA NOTIFICAÇÕES (Android 13+)
         verificarPermissaoNotificacao()
+
+        // 2. SE INSCREVER NO TÓPICO DE NOTÍCIAS (Configurado no Make como 'Geral')
+        FirebaseMessaging.getInstance().subscribeToTopic("Geral")
+            .addOnCompleteListener { task ->
+                // O aplicativo agora está sintonizado no canal de notícias
+            }
 
         // Configura a barra superior (Toolbar) e a cor da barra de status
         setupToolbar()
