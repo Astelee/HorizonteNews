@@ -16,23 +16,24 @@
         app:title="configurações"
         app:titleTextColor="@color/black" />
 
-    <!-- Área do Perfil (Igual à foto 9891.jpg) -->
+    <!-- Área de Perfil -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:padding="40dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:src="@android:drawable/ic_menu_report_image"
             app:tint="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="acesse sua conta"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -45,16 +46,22 @@
             android:textColor="@color/text_secondary" />
     </LinearLayout>
 
-    <!-- Lista de Opções -->
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+    <!-- Linha divisória -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
 
+    <!-- Botão Modo Escuro -->
     <LinearLayout
         android:id="@+id/btn_modo_escuro"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="64dp"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:paddingStart="16dp">
+        android:paddingStart="20dp"
+        android:clickable="true"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"
@@ -65,12 +72,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:text="modo escuro"
             android:textColor="@color/black"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- Exemplo de Versão do App lá embaixo -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="versão do app 1.0"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
 
 </LinearLayout>
