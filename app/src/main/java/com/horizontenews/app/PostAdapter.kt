@@ -1,76 +1,56 @@
-package com.horizontenews.app
+class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-import android.content.Intent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import org.jsoup.Jsoup
-import java.text.SimpleDateFormat
-import java.util.Locale
+    // Definimos dois tipos de linha
+    private val TYPE_HIGHLIGHT = 0
+    private val TYPE_NORMAL = 1
 
-class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val category: TextView = view.findViewById(R.id.postCategory)
-        val title: TextView = view.findViewById(R.id.postTitle)
-        val date: TextView = view.findViewById(R.id.postDate)
-        val image: ImageView = view.findViewById(R.id.postImage)
+    override fun getItemViewType(position: Int): Int {
+        // Se for a primeira notícia, retorna tipo Destaque
+        return if (position == 0) TYPE_HIGHLIGHT else TYPE_NORMAL
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_post, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val post = posts[position]
-
-        holder.title.text = post.title
-
-        // Pega a primeira etiqueta do Blogger como categoria
-        val categoryText = post.labels?.firstOrNull()?.uppercase() ?: "NOTÍCIA"
-        holder.category.text = categoryText
-
-        // Formata data
-        val formattedDate: String = try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val date = inputFormat.parse(post.published)
-            date?.let { outputFormat.format(it) } ?: post.published
-        } catch (e: Exception) {
-            post.published
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == TYPE_HIGHLIGHT) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_highlight, parent, false)
+            HighlightViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
+            NormalViewHolder(view)
         }
-        holder.date.text = formattedDate
+    }
 
-        // Extrai imagem
-        val document = Jsoup.parse(post.content)
-        val imageUrl = document.select("img").firstOrNull()?.attr("src")
-
-        Glide.with(holder.itemView.context)
-            .load(imageUrl)
-            .placeholder(android.R.color.darker_gray)
-            .error(android.R.color.darker_gray)
-            .centerCrop()
-            .into(holder.image)
-
-        // Abre detalhes passando a categoria correta
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val post = posts[position]
+        
+        if (holder is HighlightViewHolder) {
+            holder.title.text = post.title
+            holder.category.text = post.category.uppercase()
+            Glide.with(holder.itemView.context).load(post.imageUrl).into(holder.image)
+        } else if (holder is NormalViewHolder) {
+            holder.title.text = post.title
+            holder.category.text = post.category.uppercase()
+            Glide.with(holder.itemView.context).load(post.imageUrl).into(holder.image)
+        }
+        
+        // Clique para abrir o detalhe
         holder.itemView.setOnClickListener {
-            val context = holder.itemView.context
-            val intent = Intent(context, DetailActivity::class.java).apply {
-                putExtra("postTitle", post.title)
-                putExtra("postContent", post.content)
-                putExtra("postDate", formattedDate)
-                putExtra("postCategory", categoryText) // Envia a categoria real
-                putExtra("postImage", imageUrl)
-            }
-            context.startActivity(intent)
+            // Seu código de Intent para DetailActivity aqui
         }
     }
 
     override fun getItemCount() = posts.size
+
+    // ViewHolder para o Destaque
+    class HighlightViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val title: TextView = view.findViewById(R.id.tvTitleHighlight)
+        val category: TextView = view.findViewById(R.id.tvCategoryHighlight)
+        val image: ImageView = view.findViewById(R.id.ivHighlight)
+    }
+
+    // ViewHolder para a lista normal (o que você já tem)
+    class NormalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val title: TextView = view.findViewById(R.id.postTitle) // Ajuste para seus IDs reais
+        val category: TextView = view.findViewById(R.id.postCategory)
+        val image: ImageView = view.findViewById(R.id.postImage)
+    }
 }
