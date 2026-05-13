@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Invertemos o Branco e Preto -->
+    <color name="white">#121212</color> <!-- Fundo Escuro -->
+    <color name="black">#FFFFFF</color> <!-- Texto Branco -->
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    
-    <color name="horizonte_blue">#0600a8</color> 
-    <color name="orange_news">#FF8C00</color>
+    <!-- Identidade Visual (Mantemos o Laranja vibrante) -->
+    <color name="horizonte_blue">#3D5AFE</color> <!-- Um azul mais claro para brilhar no escuro -->
+    <color name="orange_news">#F29121</color> 
     <color name="orange_dark">#E67E22</color>
 
-    <color name="primary_dark">#0A1E3A</color>
-    <color name="accent">#E87722</color>
+    <!-- Backgrounds e Cards -->
+    <color name="card_background">#1E1E1E</color>
+    <color name="background_light">#121212</color>
+    <color name="divider">#333333</color>
 
-    <color name="text_primary">#1E1E1E</color>
-    <color name="text_secondary">#666666</color>
-    <color name="text_category">#0A1E3A</color>
+    <!-- Textos no Modo Escuro -->
+    <color name="text_primary">#E1E1E1</color>
+    <color name="text_secondary">#AAAAAA</color>
+    <color name="text_category">#F29121</color>
 
-    <color name="card_background">#FFFFFF</color>
-    <color name="divider">#EEEEEE</color>
-    <color name="background_light">#F8F9FA</color>
-
+    <!-- Mantemos as cores das redes sociais iguais -->
     <color name="facebook_blue">#1877F2</color>
     <color name="instagram_pink">#E4405F</color>
     <color name="whatsapp_green">#25D366</color>
-
 </resources>
