@@ -15,6 +15,7 @@
         app:title="Configurações"
         app:titleTextColor="#FFFFFF">
 
+        <!-- ÍCONE DE ENGRENAGEM -->
         <ImageView
             android:id="@+id/btn_engrenagem"
             android:layout_width="40dp"
@@ -22,7 +23,7 @@
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
             android:padding="8dp"
-            android:src="@android:drawable/ic_menu_manage"
+            android:src="@drawable/ic_settings_gear"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -44,7 +45,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary" />
-            
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
