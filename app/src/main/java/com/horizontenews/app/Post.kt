@@ -1,11 +1,10 @@
-package com.horizontenews.app
+import android.text.format.DateUtils
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
-// Esta classe representa a resposta inteira da API do Blogger
-data class PostResponse(
-    val items: List<Post>
-)
+// ... resto do seu código ...
 
-// Esta classe representa cada notícia individual
 data class Post(
     val id: String,
     val title: String,
@@ -14,15 +13,28 @@ data class Post(
     val published: String,           
     val labels: List<String>? = null 
 ) {
-    // Extrai a primeira imagem do conteúdo HTML para o seu layout de portal
-    val firstImage: String
-        get() {
-            val regex = Regex("<img [^>]*src=\"([^\"]+)\"")
-            val match = regex.find(content)
-            return match?.groups?.get(1)?.value ?: ""
-        }
+    // Nova função para gerar o "Há X tempo"
+    fun getTempoRelativo(): String {
+        return try {
+            // Define o formato de data que o Blogger envia
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            sdf.timeZone = TimeZone.getTimeZone("UTC")
+            
+            val dataPublicacao = sdf.parse(published)?.time ?: 0L
+            val agora = System.currentTimeMillis()
 
-    // Pega a primeira etiqueta (categoria) ou define "Geral"
-    val firstLabel: String
-        get() = labels?.firstOrNull() ?: "Geral"
+            // Gera o texto "há X minutos/horas" automaticamente em português
+            val rts = DateUtils.getRelativeTimeSpanString(
+                dataPublicacao, 
+                agora, 
+                DateUtils.MINUTE_IN_MILLIS
+            )
+            
+            rts.toString()
+        } catch (e: Exception) {
+            "Recente" // Caso dê algum erro na conversão
+        }
+    }
+
+    // ... suas outras funções (firstImage, firstLabel) ...
 }
