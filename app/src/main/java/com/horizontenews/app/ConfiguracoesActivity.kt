@@ -1,30 +1,49 @@
 package com.horizontenews.app
 
 import android.content.Intent
-import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
-class ConfiguracoesActivity : AppCompatActivity() {
+data class ConfigItem(
+    val title: String,
+    val subtitle: String? = null,
+    val icon: Int,
+    val action: () -> Unit
+)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_configuracoes)
+class ConfiguracoesAdapter(private val items: List<ConfigItem>) :
+    RecyclerView.Adapter<ConfiguracoesAdapter.ViewHolder>() {
 
-        // 1. Configura a Toolbar e o botão de voltar
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
-        toolbar.setNavigationOnClickListener { 
-            finish() 
-        }
-
-        // 2. Configura o clique na Engrenagem (Canto Superior Direito)
-        // Certifique-se que o ID no XML da engrenagem seja 'btn_engrenagem'
-        val btnEngrenagem = findViewById<ImageView>(R.id.btn_engrenagem)
-        btnEngrenagem.setOnClickListener {
-            // Abre a terceira página: ThemeActivity
-            val intent = Intent(this, ThemeActivity::class.java)
-            startActivity(intent)
-        }
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val icon: ImageView = view.findViewById(R.id.item_icon)
+        val title: TextView = view.findViewById(R.id.item_title)
+        val subtitle: TextView = view.findViewById(R.id.item_subtitle)
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_configuracao, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = items[position]
+        holder.title.text = item.title
+        holder.icon.setImageResource(item.icon)
+
+        if (item.subtitle != null) {
+            holder.subtitle.text = item.subtitle
+            holder.subtitle.visibility = View.VISIBLE
+        } else {
+            holder.subtitle.visibility = View.GONE
+        }
+
+        holder.itemView.setOnClickListener { item.action() }
+    }
+
+    override fun getItemCount() = items.size
 }
