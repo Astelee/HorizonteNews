@@ -15,14 +15,14 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // 1. Captura os dados enviados pelo Intent
+        // 1. Captura os dados
         val title = intent.getStringExtra("postTitle") ?: ""
         val content = intent.getStringExtra("postContent") ?: ""
         val image = intent.getStringExtra("postImage") ?: ""
         val date = intent.getStringExtra("postDate") ?: ""
         val category = intent.getStringExtra("postCategory") ?: "Notícia"
 
-        // 2. Referencia os componentes do XML
+        // 2. Mapeia os IDs
         val tvTitle = findViewById<TextView>(R.id.postTitleDetail)
         val tvContent = findViewById<TextView>(R.id.postContentDetail)
         val tvDate = findViewById<TextView>(R.id.postDateDetail)
@@ -31,42 +31,42 @@ class DetailActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btn_back)
         val btnShare = findViewById<ImageButton>(R.id.btn_share)
 
-        // 3. Aplica os textos e formatação da categoria
+        // 3. Define textos
         tvTitle.text = title
         tvDate.text = date
         tvCategory.text = category.uppercase()
 
-        // --- CORREÇÃO DEFINITIVA DO ERRO "OBJ" ---
-        // 1. Removemos o caractere especial Unicode \uFFFC
-        // 2. Removemos o caractere de substituição visual ￼
-        // 3. Aplicamos o .trim() para remover espaços vazios que sobram no início/fim
-        val cleanContent = content
+        // --- A SOLUÇÃO DEFINITIVA DO QUADRADINHO ---
+        // Aqui nós usamos Regex (expressão regular) para procurar e DELETAR 
+        // qualquer tag <img> que venha escondida no texto do Blogger.
+        val htmlWithoutImages = content.replace(Regex("<img[^>]*>"), "")
+        
+        // Limpamos o resto da sujeira por precaução
+        val cleanContent = htmlWithoutImages
             .replace("\uFFFC", "")
             .replace("￼", "")
             .trim()
         
-        // Convertemos o HTML para texto formatado (Spanned)
+        // Converte o HTML limpo e aplica o .trim() final para remover espaços sobrando no topo
         val formattedContent = HtmlCompat.fromHtml(cleanContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        tvContent.text = formattedContent
-        // -----------------------------------------
+        tvContent.text = formattedContent.trim()
+        // -------------------------------------------
 
-        // 4. Carrega a imagem da notícia com Glide
+        // 4. Carrega a Imagem Principal
         Glide.with(this)
             .load(image)
             .placeholder(android.R.color.darker_gray)
             .centerCrop()
             .into(ivImage)
 
-        // 5. Configuração das ações dos botões
-        btnBack.setOnClickListener { 
-            finish() 
-        }
+        // 5. Botões
+        btnBack.setOnClickListener { finish() }
 
         btnShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            val message = "$title\n\nConfira essa e outras notícias no Horizonte News!"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "$title\n\nConfira essa notícia no Horizonte News!")
+            }
             startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia"))
         }
     }
