@@ -33,11 +33,14 @@ class DetailActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btn_back)
         val btnShare = findViewById<ImageButton>(R.id.btn_share)
 
+        // --- ADIÇÃO PARA PERMITIR COPIAR TEXTO ---
+        tvTitle.setTextIsSelectable(true)
+        tvContent.setTextIsSelectable(true)
+        // -----------------------------------------
+
         // 3. Lógica de Formatação da Data
         val formattedDate = try {
-            // Formato original: 2026-05-12T21:01:19-07:00
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            // Formato desejado: 12/05/2026 às 21:01
             val formatter = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())
             val date = parser.parse(rawDate)
             date?.let { formatter.format(it) } ?: rawDate
@@ -50,7 +53,7 @@ class DetailActivity : AppCompatActivity() {
         tvDate.text = "Publicado em: $formattedDate"
         tvCategory.text = category.uppercase()
 
-        // 5. Limpeza do HTML (Remove imagens duplicadas e caracteres estranhos)
+        // 5. Limpeza do HTML
         val htmlWithoutImages = content.replace(Regex("<img[^>]*>"), "")
         val cleanContent = htmlWithoutImages
             .replace("\uFFFC", "")
