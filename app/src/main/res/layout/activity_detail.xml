@@ -87,6 +87,17 @@
                 android:lineSpacingExtra="4sp"
                 android:textIsSelectable="true" />
 
+            <!-- A DATA FOI MOVIDA PARA CÁ (Logo abaixo do título, como no G1) -->
+            <TextView
+                android:id="@+id/postDateDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="start"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:textStyle="normal" />
+
             <!-- Divisor inicial -->
             <View
                 android:layout_width="match_parent"
@@ -117,25 +128,6 @@
                 android:textColor="#333333"
                 android:textSize="16sp"
                 android:textIsSelectable="true" />
-
-            <!-- Linha final separando o conteúdo da data -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="32dp"
-                android:background="#EEEEEE" />
-
-            <!-- Data posicionada no rodapé da postagem -->
-            <TextView
-                android:id="@+id/postDateDetail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:textColor="#999999"
-                android:textSize="12sp"
-                android:textStyle="italic" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
