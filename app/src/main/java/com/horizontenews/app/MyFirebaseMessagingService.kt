@@ -17,11 +17,8 @@ import java.net.URL
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // 1. Pegamos o título e o corpo da notificação
         val titulo = remoteMessage.notification?.title ?: "Horizonte News"
         val mensagem = remoteMessage.notification?.body ?: "Confira a nova notícia!"
-        
-        // 2. Tentamos pegar a URL da imagem enviada pelo Firebase
         val urlImagem = remoteMessage.notification?.imageUrl?.toString()
 
         enviarNotificacao(titulo, mensagem, urlImagem)
@@ -43,15 +40,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
 
-        // 3. SE houver uma imagem, baixamos e aplicamos o estilo BigPicture
         if (urlImagem != null) {
             val bitmap = getBitmapFromUrl(urlImagem)
             if (bitmap != null) {
-                notificacaoBuilder.setLargeIcon(bitmap) // Ícone pequeno ao lado
+                notificacaoBuilder.setLargeIcon(bitmap)
                 notificacaoBuilder.setStyle(
                     NotificationCompat.BigPictureStyle()
-                        .bigPicture(bitmap) // A foto grande da notícia
-                        .bigLargeIcon(null) // Remove o ícone lateral quando expandir
+                        .bigPicture(bitmap)
+                        // A CORREÇÃO ESTÁ AQUI: null as Bitmap?
+                        .bigLargeIcon(null as Bitmap?) 
                 )
             }
         }
@@ -66,7 +63,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationManager.notify(System.currentTimeMillis().toInt(), notificacaoBuilder.build())
     }
 
-    // Função auxiliar para baixar a imagem da notícia
     private fun getBitmapFromUrl(imageUrl: String): Bitmap? {
         return try {
             val url = URL(imageUrl)
