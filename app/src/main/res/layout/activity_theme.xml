@@ -10,10 +10,11 @@
         android:id="@+id/toolbar_theme"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#F29121"
         app:title="Tema do App"
-        app:titleTextColor="#FFFFFF"
-        app:navigationIcon="@drawable/abc_ic_ab_back_material" />
+        app:titleTextColor="#000000"
+        app:navigationIcon="@drawable/ic_back_black"
+        app:navigationIconTint="#000000" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,22 +34,25 @@
         <RadioButton
             android:id="@+id/rbLight"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Sempre claro"
+            android:textSize="16sp"
             android:textColor="?android:attr/textColorPrimary" />
 
         <RadioButton
             android:id="@+id/rbDark"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Sempre escuro"
+            android:textSize="16sp"
             android:textColor="?android:attr/textColorPrimary" />
 
         <RadioButton
             android:id="@+id/rbSystem"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Padrão do sistema"
+            android:textSize="16sp"
             android:textColor="?android:attr/textColorPrimary" />
     </RadioGroup>
 
