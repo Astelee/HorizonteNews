@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    // 1. Adicione esta linha para ativar o Google Services
+    // 1. Ativa o Google Services (necessário para o Firebase)
     id 'com.google.gms.google-services'
 }
 
@@ -49,7 +49,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'org.jsoup:jsoup:1.17.2'
 
-    // 2. Adicione estas linhas para o Firebase Analytics
+    // Firebase BoM (Bill of Materials) - Gerencia as versões automaticamente
     implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    
+    // Firebase Analytics (já estava no seu código)
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    
+    // NOVA LINHA: Ativa as Notificações do Horizonte News
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 }
