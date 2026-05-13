@@ -34,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Inicialização dos componentes
+        // Inicialização dos componentes conforme o XML
         recyclerView = findViewById(R.id.recyclerViewSearch)
         editSearch = findViewById(R.id.edit_search)
         layoutSocial = findViewById(R.id.layout_social_bottom)
@@ -51,34 +51,34 @@ class SearchActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        // Botão "X" para limpar o texto
+        // Lógica do botão "X" (Limpar)
         btnClear.setOnClickListener {
             editSearch.text.clear()
+            tvEmpty.visibility = View.GONE
+            // Opcional: mostrar novamente as redes sociais ao limpar
+            layoutSocial.visibility = View.VISIBLE
         }
 
-        // Lógica para mostrar/esconder o botão "X" enquanto digita
+        // Monitora o texto para mostrar/esconder o "X" em tempo real
         editSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
                     btnClear.visibility = View.GONE
-                } else {
-                    // Só mostra o X se não estiver carregando
-                    if (progressBar.visibility != View.VISIBLE) {
-                        btnClear.visibility = View.VISIBLE
-                    }
+                } else if (progressBar.visibility != View.VISIBLE) {
+                    btnClear.visibility = View.VISIBLE
                 }
             }
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Links Sociais
+        // Configuração dos links das redes sociais
         btnInsta.setOnClickListener { abrirLink("https://www.instagram.com/horizontenews_/") }
         btnWhats.setOnClickListener { abrirLink("https://wa.me/5585994130806") }
         btnFace.setOnClickListener { abrirLink("https://www.facebook.com/share/1AJNBnodHo/") }
 
-        // Faz a busca quando clicar no "ENTER" do teclado
-        editSearch.setOnEditorActionListener { v, actionId, event ->
+        // Dispara a busca ao clicar na lupa do teclado
+        editSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = editSearch.text.toString().trim()
                 if (query.isNotEmpty()) {
@@ -92,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
-        // Mostra o carregamento e esconde o botão de limpar e a mensagem de erro
+        // Estado visual de "Carregando"
         progressBar.visibility = View.VISIBLE
         btnClear.visibility = View.GONE
         tvEmpty.visibility = View.GONE
@@ -107,8 +107,12 @@ class SearchActivity : AppCompatActivity() {
 
         service.searchPosts(Config.BLOG_ID, query, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                progressBar.visibility = View.GONE // Esconde o carregamento
-                btnClear.visibility = View.VISIBLE // Volta a mostrar o "X"
+                progressBar.visibility = View.GONE
+                
+                // Só volta a mostrar o X se o campo não foi limpo durante a busca
+                if (editSearch.text.isNotEmpty()) {
+                    btnClear.visibility = View.VISIBLE
+                }
 
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
@@ -121,14 +125,14 @@ class SearchActivity : AppCompatActivity() {
                         recyclerView.adapter = PostAdapter(emptyList())
                     }
                 } else {
-                    Toast.makeText(this@SearchActivity, "Erro na resposta do servidor", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SearchActivity, "Erro ao buscar notícias", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                btnClear.visibility = View.VISIBLE
-                Toast.makeText(this@SearchActivity, "Erro na conexão", Toast.LENGTH_SHORT).show()
+                if (editSearch.text.isNotEmpty()) btnClear.visibility = View.VISIBLE
+                Toast.makeText(this@SearchActivity, "Verifique sua conexão", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -138,7 +142,7 @@ class SearchActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(this, "Erro ao abrir link", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Não foi possível abrir o link", Toast.LENGTH_SHORT).show()
         }
     }
 }
