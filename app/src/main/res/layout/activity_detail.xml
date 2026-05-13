@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Faixa superior com a cor característica -->
+    <!-- Faixa decorativa superior -->
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -54,7 +54,6 @@
                 android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_share_black_custom" />
-
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -68,7 +67,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Categoria Dinâmica -->
             <TextView
                 android:id="@+id/postCategoryDetail"
                 android:layout_width="wrap_content"
@@ -78,7 +76,6 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <!-- Título da Notícia -->
             <TextView
                 android:id="@+id/postTitleDetail"
                 android:layout_width="match_parent"
@@ -89,22 +86,13 @@
                 android:textStyle="bold"
                 android:lineSpacingExtra="4sp" />
 
-            <!-- Data -->
-            <TextView
-                android:id="@+id/postDateDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textColor="#666666"
-                android:textSize="12sp" />
-
+            <!-- Divisor inicial -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="16dp"
                 android:background="#EEEEEE" />
 
-            <!-- Imagem com cantos arredondados -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
@@ -118,7 +106,7 @@
                     android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Conteúdo da Notícia (Onde o erro OBJ é limpo via código) -->
+            <!-- Texto da Notícia -->
             <TextView
                 android:id="@+id/postContentDetail"
                 android:layout_width="match_parent"
@@ -128,7 +116,25 @@
                 android:textColor="#333333"
                 android:textSize="16sp" />
 
+            <!-- Linha final separando o conteúdo da data -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:background="#EEEEEE" />
+
+            <!-- Data posicionada no rodapé da postagem -->
+            <TextView
+                android:id="@+id/postDateDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </LinearLayout>
