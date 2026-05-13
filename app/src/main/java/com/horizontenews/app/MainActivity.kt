@@ -1,9 +1,14 @@
 package com.horizontenews.app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -22,6 +27,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 1. PEDIR PERMISSÃO PARA NOTIFICAÇÕES (Android 13+)
+        verificarPermissaoNotificacao()
+
         // Configura a barra superior (Toolbar) e a cor da barra de status
         setupToolbar()
 
@@ -32,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Configura o botão da lupa para abrir a tela de pesquisa
-        // O ID btn_open_search deve estar no seu activity_main.xml
         val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
         btnOpenSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
@@ -50,8 +57,17 @@ class MainActivity : AppCompatActivity() {
         fetchPosts()
     }
 
+    // Função para pedir permissão ao usuário
+    private fun verificarPermissaoNotificacao() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != 
+                PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+    }
+
     private fun fetchPosts() {
-        // Inicia a animação de carregamento
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -61,7 +77,6 @@ class MainActivity : AppCompatActivity() {
 
         val service = retrofit.create(BloggerService::class.java)
 
-        // Busca os posts usando as chaves configuradas no arquivo Config.kt
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 swipeRefreshLayout.isRefreshing = false
@@ -72,7 +87,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                // Para a animação mesmo se houver erro de conexão
                 swipeRefreshLayout.isRefreshing = false
             }
         })
@@ -81,11 +95,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        
-        // Remove o título padrão da Toolbar para usar o seu personalizado
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // Define a cor da barra de status do celular (topo onde fica a bateria)
         window.statusBarColor = android.graphics.Color.parseColor("#F29121")
     }
 }
