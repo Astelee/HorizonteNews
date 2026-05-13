@@ -1,10 +1,10 @@
 package com.horizontenews.app
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 
 class ConfiguracoesActivity : AppCompatActivity() {
 
@@ -12,32 +12,19 @@ class ConfiguracoesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configuracoes)
 
-        // Configura o clique na linha do Modo Escuro
-        val btnModoEscuro = findViewById<LinearLayout>(R.id.btn_modo_escuro)
-        btnModoEscuro.setOnClickListener {
-            mostrarOpcoesDeTema()
-        }
-        
-        // Botão voltar da Toolbar
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_config)
+        // 1. Configura a Toolbar e o botão de voltar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
         toolbar.setNavigationOnClickListener { 
             finish() 
         }
-    }
 
-    private fun mostrarOpcoesDeTema() {
-        val opcoes = arrayOf("Sempre claro", "Sempre escuro", "Automático")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Selecione o modo")
-
-        builder.setItems(opcoes) { _, which ->
-            when (which) {
-                0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-            delegate.applyDayNight()
+        // 2. Configura o clique na Engrenagem (Canto Superior Direito)
+        // Certifique-se que o ID no XML da engrenagem seja 'btn_engrenagem'
+        val btnEngrenagem = findViewById<ImageView>(R.id.btn_engrenagem)
+        btnEngrenagem.setOnClickListener {
+            // Abre a terceira página: ThemeActivity
+            val intent = Intent(this, ThemeActivity::class.java)
+            startActivity(intent)
         }
-        builder.show()
     }
 }
