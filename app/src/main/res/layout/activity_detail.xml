@@ -76,6 +76,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
+            <!-- Título Selecionável -->
             <TextView
                 android:id="@+id/postTitleDetail"
                 android:layout_width="match_parent"
@@ -84,7 +85,8 @@
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:lineSpacingExtra="4sp" />
+                android:lineSpacingExtra="4sp"
+                android:textIsSelectable="true" />
 
             <!-- Divisor inicial -->
             <View
@@ -102,11 +104,11 @@
                 <ImageView
                     android:id="@+id/postImageDetail"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="parent"
                     android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Texto da Notícia -->
+            <!-- Conteúdo da Notícia Selecionável -->
             <TextView
                 android:id="@+id/postContentDetail"
                 android:layout_width="match_parent"
@@ -114,16 +116,16 @@
                 android:layout_marginTop="20dp"
                 android:lineSpacingExtra="6sp"
                 android:textColor="#333333"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textIsSelectable="true" />
 
-            <!-- Linha final separando o conteúdo da data -->
+            <!-- Linha final -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="32dp"
                 android:background="#EEEEEE" />
 
-            <!-- Data posicionada no rodapé da postagem -->
             <TextView
                 android:id="@+id/postDateDetail"
                 android:layout_width="match_parent"
