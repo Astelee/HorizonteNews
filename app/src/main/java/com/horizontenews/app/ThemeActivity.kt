@@ -1,6 +1,7 @@
 package com.horizontenews.app
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -18,36 +19,34 @@ class ThemeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_theme)
 
-        // 1. CONFIGURAR A TOOLBAR
         val toolbar = findViewById<Toolbar>(R.id.toolbar_theme)
         
-        // CORREÇÃO: Pegamos o ícone e aplicamos o TINT (cor) de forma compatível
+        // Ajusta a cor do ícone de acordo com o tema atual
+        val isDarkMode = resources.configuration.uiMode and 
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK == 
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+        
         val navigationIcon = ContextCompat.getDrawable(this, R.drawable.ic_back_arrow_black)
         if (navigationIcon != null) {
             val wrappedIcon = DrawableCompat.wrap(navigationIcon).mutate()
-            DrawableCompat.setTint(wrappedIcon, Color.BLACK) // Garante a cor preta
+            // Se estiver no modo escuro, ícone branco. Se não, preto.
+            DrawableCompat.setTint(wrappedIcon, if (isDarkMode) Color.WHITE else Color.BLACK)
             toolbar.navigationIcon = wrappedIcon
         }
-        
-        // Faz o botão de voltar funcionar
-        toolbar.setNavigationOnClickListener {
-            finish() 
-        }
 
-        // 2. ELEMENTOS DA INTERFACE
+        toolbar.setNavigationOnClickListener { finish() }
+
         val radioGroupTheme = findViewById<RadioGroup>(R.id.radioGroupTheme)
         val rbLight = findViewById<RadioButton>(R.id.rbLight)
         val rbDark = findViewById<RadioButton>(R.id.rbDark)
         val rbSystem = findViewById<RadioButton>(R.id.rbSystem)
 
-        // Pré-selecionar o botão do tema atual
         when (getSavedTheme()) {
             AppCompatDelegate.MODE_NIGHT_NO -> rbLight.isChecked = true
             AppCompatDelegate.MODE_NIGHT_YES -> rbDark.isChecked = true
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> rbSystem.isChecked = true
         }
 
-        // 3. LÓGICA DO MODO ESCURO
         radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
             val mode = when (checkedId) {
                 R.id.rbLight -> AppCompatDelegate.MODE_NIGHT_NO
@@ -55,18 +54,22 @@ class ThemeActivity : AppCompatActivity() {
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
 
-            saveTheme(mode)
-
-            // Aplica e recria a tela para mudar a cor na hora
-            AppCompatDelegate.setDefaultNightMode(mode)
-            delegate.applyDayNight() 
-            recreate() 
+            if (mode != getSavedTheme()) {
+                saveTheme(mode)
+                AppCompatDelegate.setDefaultNightMode(mode)
+                
+                // Reinicia a Activity com uma transição suave para aplicar o tema
+                val intent = intent
+                finish()
+                startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
         }
     }
 
     private fun saveTheme(mode: Int) {
         val sharedPref = getSharedPreferences("theme_pref", Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
+        with(sharedPref.edit()) {
             putInt("app_theme", mode)
             apply()
         }
