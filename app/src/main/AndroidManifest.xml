@@ -32,6 +32,12 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- NOVA ATIVIDADE PARA O MENU DE CONFIGURAÇÕES -->
+        <activity
+            android:name="com.horizontenews.app.ConfiguracoesActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- SERVIÇO DE NOTIFICAÇÕES DO FIREBASE -->
         <service
             android:name="com.horizontenews.app.MyFirebaseMessagingService"
