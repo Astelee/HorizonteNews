@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageButton
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -29,6 +28,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // FORÇA O APP A INICIAR NO MODO CLARO COMO PADRÃO
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+        
         setContentView(R.layout.activity_main)
 
         // 1. Permissões e Firebase
@@ -37,14 +42,14 @@ class MainActivity : AppCompatActivity() {
 
         // 2. Configurações Visuais
         setupToolbar()
-        
+
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // 3. Configura a Barra Inferior (Bottom Navigation)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        
+
         // Garante que o ícone selecionado fique laranja
         bottomNav.itemIconTintList = null 
 
@@ -56,9 +61,12 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_settings -> {
-                    // Abre o menu de Tema (Claro/Escuro)
-                    mostrarOpcoesDeTema()
-                    true
+                    // AGORA SIM: Abre a nova página de Configurações em vez de abrir a janela
+                    val intent = Intent(this, ConfiguracoesActivity::class.java)
+                    startActivity(intent)
+                    
+                    // Deixamos 'false' para que, ao voltar, o botão "Início" continue aceso
+                    false
                 }
                 else -> false
             }
@@ -75,22 +83,6 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
 
         fetchPosts()
-    }
-
-    // --- FUNÇÃO PARA TROCAR O TEMA (MODO ESCURO/CLARO) ---
-    private fun mostrarOpcoesDeTema() {
-        val opcoes = arrayOf("Modo Claro", "Modo Escuro", "Padrão do Sistema")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Configurações de Exibição")
-        
-        builder.setItems(opcoes) { _, which ->
-            when (which) {
-                0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-        }
-        builder.show()
     }
 
     private fun verificarPermissaoNotificacao() {
@@ -128,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        // Barra de status sempre no laranja do Horizonte News
+        // Barra de status sempre no laranja
         window.statusBarColor = android.graphics.Color.parseColor("#F29121")
     }
 }
