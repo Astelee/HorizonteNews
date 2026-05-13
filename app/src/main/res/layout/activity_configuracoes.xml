@@ -4,93 +4,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?android:attr/windowBackground">
 
-    <!-- Toolbar com botão de voltar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_config"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/white"
+        android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/abc_ic_ab_back_material"
-        app:title="configurações"
-        app:titleTextColor="@color/black" />
+        app:title="Configurações"
+        app:titleTextColor="#FFFFFF">
 
-    <!-- Área de Perfil -->
+        <ImageView
+            android:id="@+id/btn_engrenagem"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_manage"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#FFFFFF" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="40dp">
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_menu_report_image"
-            app:tint="@color/black" />
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="acesse sua conta"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
+            android:text="Horizonte News"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary" />
+            
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ou cadastre-se grátis"
-            android:textColor="@color/text_secondary" />
-    </LinearLayout>
-
-    <!-- Linha divisória -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Botão Modo Escuro -->
-    <LinearLayout
-        android:id="@+id/btn_modo_escuro"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:clickable="true"
-        android:focusable="true">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_view"
-            app:tint="@color/black" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="modo escuro"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:text="Clique na engrenagem para mudar o tema"
+            android:textColor="?android:attr/textColorSecondary" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider" />
+        android:background="?android:attr/listDivider" />
 
-    <!-- Exemplo de Versão do App lá embaixo -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:padding="20dp"
         android:gravity="center"
         android:text="versão do app 1.0"
-        android:textColor="@color/text_secondary"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="12sp" />
 
 </LinearLayout>
