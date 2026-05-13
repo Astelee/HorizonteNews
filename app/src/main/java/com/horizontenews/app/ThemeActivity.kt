@@ -1,6 +1,7 @@
 package com.horizontenews.app
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.widget.RadioButton
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 
 class ThemeActivity : AppCompatActivity() {
 
@@ -16,14 +18,16 @@ class ThemeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_theme)
 
-        // 1. CONFIGURAR A TOOLBAR COM O SEU ÍCONE CORRETO
+        // 1. CONFIGURAR A TOOLBAR
         val toolbar = findViewById<Toolbar>(R.id.toolbar_theme)
         
-        // CORREÇÃO: Usando o nome exato do seu arquivo ic_back_arrow_black
-        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.ic_back_arrow_black)
-        
-        // Garante que o ícone fique PRETO (combinando com a lupa)
-        toolbar.setNavigationIconTint(android.graphics.Color.BLACK)
+        // CORREÇÃO: Pegamos o ícone e aplicamos o TINT (cor) de forma compatível
+        val navigationIcon = ContextCompat.getDrawable(this, R.drawable.ic_back_arrow_black)
+        if (navigationIcon != null) {
+            val wrappedIcon = DrawableCompat.wrap(navigationIcon).mutate()
+            DrawableCompat.setTint(wrappedIcon, Color.BLACK) // Garante a cor preta
+            toolbar.navigationIcon = wrappedIcon
+        }
         
         // Faz o botão de voltar funcionar
         toolbar.setNavigationOnClickListener {
