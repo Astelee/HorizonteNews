@@ -13,7 +13,7 @@
         android:background="#F29121"
         app:title="Tema do App"
         app:titleTextColor="#000000"
-        app:navigationIcon="@drawable/ic_back_black"
+        app:navigationIcon="@drawable/ic_back_arrow_black"
         app:navigationIconTint="#000000" />
 
     <TextView
