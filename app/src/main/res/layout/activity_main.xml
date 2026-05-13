@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Faixa laranja do topo -->
+    <!-- Faixa decorativa superior -->
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -23,21 +23,29 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <!-- Campo de busca atualizado para "Buscar" -->
-            <EditText
-                android:id="@+id/search_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+            <!-- Ícone de voltar (opcional, comum em telas de busca) -->
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_centerVertical="true"
+                android:src="@drawable/ic_search_black" 
+                app:tint="#000000" />
+
+            <!-- AQUI ESTÁ A CORREÇÃO: Removido "no Horizonte News" -->
+            <EditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/btn_back"
+                android:layout_marginStart="12dp"
                 android:background="@android:color/transparent"
                 android:hint="Buscar"
                 android:textColorHint="#999999"
                 android:textSize="16sp"
-                android:drawableStart="@drawable/ic_search_black"
-                android:drawablePadding="10dp"
                 android:inputType="text"
                 android:maxLines="1" />
 
