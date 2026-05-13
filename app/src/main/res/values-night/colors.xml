@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cores para o Modo Noturno -->
+    <color name="white">#121212</color> <!-- Fundo fica escuro -->
+    <color name="black">#FFFFFF</color> <!-- Texto fica branco -->
+    <color name="colorPrimary">#0600a8</color> <!-- Seu azul oficial -->
+</resources>
