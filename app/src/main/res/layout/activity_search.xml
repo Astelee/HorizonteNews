@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="#FFFFFF"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        app:contentInsetStart="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -29,8 +30,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/btn_back_search"
+                android:layout_toStartOf="@+id/container_icons"
                 android:background="@android:color/transparent"
-                android:hint="Buscar"
+                android:hint="Buscar no Horizonte News"
                 android:textColorHint="#999999"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -39,14 +41,55 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text" />
 
+            <FrameLayout
+                android:id="@+id/container_icons"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="4dp">
+
+                <ImageButton
+                    android:id="@+id/btn_clear_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="gone"
+                    app:tint="#666666" />
+
+                <ProgressBar
+                    android:id="@+id/progress_search"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:indeterminateTint="#F29121" />
+            </FrameLayout>
+
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSearch"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_empty_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Nenhuma notícia encontrada."
+            android:textColor="#999999"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/layout_social_bottom"
