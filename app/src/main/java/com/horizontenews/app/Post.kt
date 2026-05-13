@@ -1,17 +1,20 @@
-package com.horizontenews.app
-
-// Esta classe representa a resposta inteira da API
-data class PostResponse(
-    val items: List<Post>
-)
-
-// Esta classe representa cada notícia individual
 data class Post(
     val id: String,
     val title: String,
     val content: String,
     val url: String,
-    // Adicionamos estes dois campos abaixo:
-    val published: String,           // Armazena a data de publicação
-    val labels: List<String>? = null // Armazena as categorias (tags) do Blogger
-)
+    val published: String,
+    val labels: List<String>? = null
+) {
+    // Pega a primeira imagem que estiver dentro do conteúdo HTML
+    val firstImage: String
+        get() {
+            val regex = Regex("<img [^>]*src=\"([^\"]+)\"")
+            val match = regex.find(content)
+            return match?.groups?.get(1)?.value ?: ""
+        }
+
+    // Pega a primeira etiqueta (label) ou retorna "Notícia" se estiver vazio
+    val firstLabel: String
+        get() = labels?.firstOrNull() ?: "Notícia"
+}
