@@ -1,49 +1,66 @@
 package com.horizontenews.app
 
 import android.content.Intent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.Bundle
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-data class ConfigItem(
-    val title: String,
-    val subtitle: String? = null,
-    val icon: Int,
-    val action: () -> Unit
-)
+class ConfiguracoesActivity : AppCompatActivity() {
 
-class ConfiguracoesAdapter(private val items: List<ConfigItem>) :
-    RecyclerView.Adapter<ConfiguracoesAdapter.ViewHolder>() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_configuracoes)
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val icon: ImageView = view.findViewById(R.id.item_icon)
-        val title: TextView = view.findViewById(R.id.item_title)
-        val subtitle: TextView = view.findViewById(R.id.item_subtitle)
-    }
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
+        toolbar.setNavigationOnClickListener { finish() }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_configuracao, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.title.text = item.title
-        holder.icon.setImageResource(item.icon)
-
-        if (item.subtitle != null) {
-            holder.subtitle.text = item.subtitle
-            holder.subtitle.visibility = View.VISIBLE
-        } else {
-            holder.subtitle.visibility = View.GONE
+        // Botão de engrenagem no topo
+        val btnEngrenagem = findViewById<ImageView>(R.id.btn_engrenagem)
+        btnEngrenagem.setOnClickListener {
+            startActivity(Intent(this, ThemeActivity::class.java))
         }
 
-        holder.itemView.setOnClickListener { item.action() }
-    }
+        // Configura RecyclerView
+        val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-    override fun getItemCount() = items.size
+        val items = listOf(
+            ConfigItem(
+                title = "Tema",
+                subtitle = "Modo claro ou escuro",
+                icon = R.drawable.ic_settings_gear,
+                action = { startActivity(Intent(this, ThemeActivity::class.java)) }
+            ),
+            ConfigItem(
+                title = "Notificações",
+                subtitle = "Gerenciar alertas de notícias",
+                icon = android.R.drawable.ic_dialog_info,
+                action = { Toast.makeText(this, "Notificações em breve", Toast.LENGTH_SHORT).show() }
+            ),
+            ConfigItem(
+                title = "Tamanho do texto",
+                subtitle = "Ajustar tamanho da fonte",
+                icon = android.R.drawable.ic_menu_edit,
+                action = { Toast.makeText(this, "Tamanho de texto em breve", Toast.LENGTH_SHORT).show() }
+            ),
+            ConfigItem(
+                title = "Limpar cache",
+                subtitle = "Liberar espaço",
+                icon = android.R.drawable.ic_menu_delete,
+                action = { Toast.makeText(this, "Cache limpo!", Toast.LENGTH_SHORT).show() }
+            ),
+            ConfigItem(
+                title = "Sobre o app",
+                subtitle = "Versão 1.0 • Horizonte News",
+                icon = android.R.drawable.ic_dialog_info,
+                action = { Toast.makeText(this, "Horizonte News © 2026", Toast.LENGTH_LONG).show() }
+            )
+        )
+
+        recyclerView.adapter = ConfiguracoesAdapter(items)
+    }
 }
