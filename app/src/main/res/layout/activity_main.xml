@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
+    <!-- Faixa laranja do topo -->
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -21,28 +22,24 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="HORIZONTE NEWS"
-                android:textColor="#000000"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btn_open_search"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
+            <!-- Campo de busca atualizado para "Buscar" -->
+            <EditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_search_black"
-                android:contentDescription="Pesquisar"
-                app:tint="#000000" />
+                android:background="@android:color/transparent"
+                android:hint="Buscar"
+                android:textColorHint="#999999"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/ic_search_black"
+                android:drawablePadding="10dp"
+                android:inputType="text"
+                android:maxLines="1" />
 
         </RelativeLayout>
 
