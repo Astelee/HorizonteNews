@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
+    <!-- Toolbar com a barra de busca -->
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -25,6 +26,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_back_arrow_black" />
 
+            <!-- ATUALIZADO: hint alterado para "Buscar" -->
             <EditText
                 android:id="@+id/edit_search"
                 android:layout_width="match_parent"
@@ -32,7 +34,7 @@
                 android:layout_toEndOf="@id/btn_back_search"
                 android:layout_toStartOf="@+id/container_icons"
                 android:background="@android:color/transparent"
-                android:hint="Buscar no Horizonte News"
+                android:hint="Buscar"
                 android:textColorHint="#999999"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -69,6 +71,7 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Área de resultados -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -90,6 +93,7 @@
             android:visibility="gone" />
     </FrameLayout>
 
+    <!-- Ícones de redes sociais no rodapé -->
     <LinearLayout
         android:id="@+id/layout_social_bottom"
         android:layout_width="match_parent"
