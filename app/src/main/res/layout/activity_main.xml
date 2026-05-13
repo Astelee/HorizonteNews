@@ -18,15 +18,13 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tv_logo_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Horizonte News"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="19sp"
-                android:textStyle="bold"
-                android:textAllCaps="true" />
+                android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/btn_open_search"
@@ -110,13 +108,13 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_settings_gear" 
+                android:src="@drawable/ic_menu_black_24dp"
                 app:tint="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ajustes"
+                android:text="Menu"
                 android:textColor="#FFFFFF"
                 android:textSize="11sp" />
         </LinearLayout>
