@@ -8,8 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class DetailActivity : AppCompatActivity() {
 
@@ -17,11 +15,11 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // 1. Captura os dados vindos do Adapter
+        // 1. Captura os dados vindos do Adapter (já formatados pelo PostAdapter)
         val title = intent.getStringExtra("postTitle") ?: ""
         val content = intent.getStringExtra("postContent") ?: ""
         val image = intent.getStringExtra("postImage") ?: ""
-        val rawDate = intent.getStringExtra("postDate") ?: "" 
+        val tempoRelativo = intent.getStringExtra("postDate") ?: "" 
         val category = intent.getStringExtra("postCategory") ?: "Notícia"
 
         // 2. Mapeia os componentes do layout
@@ -33,27 +31,18 @@ class DetailActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btn_back)
         val btnShare = findViewById<ImageButton>(R.id.btn_share)
 
-        // --- ADIÇÃO PARA PERMITIR COPIAR TEXTO ---
+        // Permite copiar texto
         tvTitle.setTextIsSelectable(true)
         tvContent.setTextIsSelectable(true)
-        // -----------------------------------------
 
-        // 3. Lógica de Formatação da Data
-        val formattedDate = try {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            val formatter = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())
-            val date = parser.parse(rawDate)
-            date?.let { formatter.format(it) } ?: rawDate
-        } catch (e: Exception) {
-            rawDate
-        }
-
-        // 4. Define os textos básicos
+        // 3. Define os textos (Removi a lógica de SimpleDateFormat que causava o erro)
         tvTitle.text = title
-        tvDate.text = "Publicado em: $formattedDate"
         tvCategory.text = category.uppercase()
+        
+        // CORREÇÃO: Agora exibe apenas "Publicado há 8 horas" sem o "em:"
+        tvDate.text = "Publicado $tempoRelativo"
 
-        // 5. Limpeza do HTML
+        // 4. Limpeza do HTML
         val htmlWithoutImages = content.replace(Regex("<img[^>]*>"), "")
         val cleanContent = htmlWithoutImages
             .replace("\uFFFC", "")
@@ -63,14 +52,14 @@ class DetailActivity : AppCompatActivity() {
         val formattedContent = HtmlCompat.fromHtml(cleanContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
         tvContent.text = formattedContent.trim()
 
-        // 6. Carrega a Imagem Principal com Glide
+        // 5. Carrega a Imagem Principal
         Glide.with(this)
             .load(image)
             .placeholder(android.R.color.darker_gray)
             .centerCrop()
             .into(ivImage)
 
-        // 7. Configurações dos Botões
+        // 6. Configurações dos Botões
         btnBack.setOnClickListener { finish() }
 
         btnShare.setOnClickListener {
