@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Faixa decorativa superior -->
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -22,32 +21,28 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:layout_height="match_parent">
 
-            <!-- Ícone de voltar (opcional, comum em telas de busca) -->
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="HORIZONTE NEWS"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btn_open_search"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_search_black" 
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_search_black"
+                android:contentDescription="Pesquisar"
                 app:tint="#000000" />
-
-            <!-- AQUI ESTÁ A CORREÇÃO: Removido "no Horizonte News" -->
-            <EditText
-                android:id="@+id/search_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/btn_back"
-                android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
-                android:hint="Buscar"
-                android:textColorHint="#999999"
-                android:textSize="16sp"
-                android:inputType="text"
-                android:maxLines="1" />
 
         </RelativeLayout>
 
