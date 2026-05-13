@@ -25,7 +25,7 @@
                 android:id="@+id/postCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VIOLÊNCIA"
+                android:text="CATEGORIA"
                 android:textColor="#F29121"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -38,20 +38,20 @@
                 android:layout_marginTop="6dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:text="Título da notícia aqui"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:lineSpacingExtra="2sp" />
 
+            <!-- Este campo receberá o "há 2 horas" do PostAdapter -->
             <TextView
                 android:id="@+id/postDate"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="11/05/2026"
                 android:textColor="#666666"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
