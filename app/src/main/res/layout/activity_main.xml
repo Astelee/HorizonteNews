@@ -3,61 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground">
+    android:background="#FFFFFF">
 
-    <!-- Toolbar Moderna -->
+    <!-- Barra fina laranja no topo (igual à tela de abertura) -->
+    <View
+        android:id="@+id/top_orange_bar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="#FF6800"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Título principal - igual à tela de abertura -->
+    <TextView
+        android:id="@+id/tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HORIZONTE NEWS"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#1F1F1F"
+        android:letterSpacing="0.05"
+        app:layout_constraintTop_toBottomOf="@id/top_orange_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Toolbar limpa -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FF6800"
-        app:contentInsetStart="0dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/tv_header"
+        app:contentInsetStart="0dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <ImageButton
+            android:id="@+id/btn_open_search"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_search_black"
+            app:tint="#FF6800" />
 
-            <!-- Logo + Título -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_launcher"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Horizonte News"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Botão de Busca -->
-            <ImageButton
-                android:id="@+id/btn_open_search"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_search_black"
-                app:tint="#FFFFFF" />
-
-        </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo das notícias -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -69,11 +60,11 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:clipToPadding="false" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Bottom Navigation Bar Estilosa -->
+    <!-- Bottom Bar -->
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
@@ -84,15 +75,11 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Botão Início -->
         <LinearLayout
             android:id="@+id/btn_home"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -101,7 +88,6 @@
                 android:layout_height="28dp"
                 android:src="@drawable/ic_home_black_24dp"
                 app:tint="#FF6800" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,15 +97,11 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Botão Menu -->
         <LinearLayout
             android:id="@+id/btn_menu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -128,7 +110,6 @@
                 android:layout_height="28dp"
                 android:src="@drawable/ic_menu_black_24dp"
                 app:tint="#FFFFFF" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
