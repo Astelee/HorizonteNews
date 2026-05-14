@@ -114,11 +114,39 @@
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="#1E1E1E">
 
-                <ImageView
-                    android:id="@+id/postImageDetail"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
+                    android:layout_height="match_parent">
+
+                    <!-- Imagem -->
+                    <ImageView
+                        android:id="@+id/postImageDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
+
+                    <!-- Botão salvar -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="10dp"
+                        app:cardCornerRadius="22dp"
+                        app:cardElevation="5dp"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <ImageView
+                            android:id="@+id/btnSave"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_bookmark_outline"
+                            android:contentDescription="Salvar notícia" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </FrameLayout>
+
             </androidx.cardview.widget.CardView>
 
             <!-- Conteúdo da notícia -->
@@ -134,4 +162,5 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
 </LinearLayout>
