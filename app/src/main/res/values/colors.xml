@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- ==================== CORES PRINCIPAIS ==================== -->
-    <color name="orange_main">#FF6800</color>        <!-- Laranja da barra fina -->
-    <color name="orange_news">#F29121</color>
-    <color name="horizonte_blue">#3D5AFE</color>
-
-    <!-- ==================== MODO CLARO (Padrão) ==================== -->
+    <!-- Cores para o Modo Claro -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#1F1F1F</color>
     <color name="background">#FFFFFF</color>
     <color name="surface">#FFFFFF</color>
     <color name="card_background">#FFFFFF</color>
+    
     <color name="text_primary">#1F1F1F</color>
     <color name="text_secondary">#666666</color>
     <color name="divider">#E0E0E0</color>
     <color name="grey_border">#E0E0E0</color>
 
-    <!-- ==================== MODO ESCURO ==================== -->
-    <color name="background_dark">#121212</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="card_background_dark">#1E1E1E</color>
-    <color name="text_primary_dark">#EDEDED</color>
-    <color name="text_secondary_dark">#AAAAAA</color>
-    <color name="divider_dark">#333333</color>
-
+    <!-- Laranja principal -->
+    <color name="orange_main">#FF6800</color>
+    <color name="colorPrimary">#FF6800</color>
 </resources>
