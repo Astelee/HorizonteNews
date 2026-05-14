@@ -21,28 +21,28 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
 
-        // Configura toolbar corretamente
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         toolbar.setNavigationOnClickListener {
-            finish()
-            overridePendingTransition(
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val items = listOf(
+
             ConfigItem(
                 title = "Tema",
                 subtitle = "Modo claro ou escuro",
                 icon = R.drawable.ic_settings_gear,
                 action = {
-                    startActivity(Intent(this, ThemeActivity::class.java))
+                    startActivity(
+                        Intent(this, ThemeActivity::class.java)
+                    )
                 }
             ),
 
@@ -58,7 +58,11 @@ class ConfiguracoesActivity : AppCompatActivity() {
                 subtitle = "Ajustar fonte",
                 icon = android.R.drawable.ic_menu_edit,
                 action = {
-                    Toast.makeText(this, "Em breve", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Em breve",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             ),
 
@@ -81,10 +85,13 @@ class ConfiguracoesActivity : AppCompatActivity() {
     }
 
     private fun toggleNotificacoes() {
+
         notificacoesAtivadas = !notificacoesAtivadas
 
         if (notificacoesAtivadas) {
-            FirebaseMessaging.getInstance().subscribeToTopic("Geral")
+
+            FirebaseMessaging.getInstance()
+                .subscribeToTopic("Geral")
 
             Toast.makeText(
                 this,
@@ -94,7 +101,8 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         } else {
 
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("Geral")
+            FirebaseMessaging.getInstance()
+                .unsubscribeFromTopic("Geral")
 
             Toast.makeText(
                 this,
@@ -105,7 +113,9 @@ class ConfiguracoesActivity : AppCompatActivity() {
     }
 
     private fun limparCache() {
+
         try {
+
             deleteDir(cacheDir)
 
             Toast.makeText(
@@ -125,7 +135,9 @@ class ConfiguracoesActivity : AppCompatActivity() {
     }
 
     private fun deleteDir(dir: File?): Boolean {
+
         if (dir != null && dir.isDirectory) {
+
             dir.listFiles()?.forEach {
                 deleteDir(it)
             }
@@ -135,6 +147,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
     }
 
     private fun mostrarSobre() {
+
         AlertDialog.Builder(this)
             .setTitle("Horizonte News")
             .setMessage("Versão 1.0\nJornal local de Horizonte - Ceará")
