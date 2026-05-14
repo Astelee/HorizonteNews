@@ -5,9 +5,10 @@
     <color name="black">#FFFFFF</color> <!-- Texto Branco -->
 
     <!-- Identidade Visual (Mantemos o Laranja vibrante) -->
-    <color name="horizonte_blue">#3D5AFE</color> <!-- Um azul mais claro para brilhar no escuro -->
+    <color name="horizonte_blue">#3D5AFE</color>
     <color name="orange_news">#F29121</color> 
     <color name="orange_dark">#E67E22</color>
+    <color name="orange">#F29121</color>  <!-- NOVA: Cor laranja para snackbar -->
 
     <!-- Backgrounds e Cards -->
     <color name="card_background">#1E1E1E</color>
