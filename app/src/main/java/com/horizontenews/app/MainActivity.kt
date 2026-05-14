@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageButton
@@ -96,13 +97,17 @@ class MainActivity : AppCompatActivity() {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
-                    recyclerView.adapter = PostAdapter(posts)
+                    
+                    // Aqui está a correção principal
+                    recyclerView.adapter = PostAdapter(posts) { post ->
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.url))
+                        startActivity(intent)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                // TODO: Mostrar erro para o usuário
             }
         })
     }
