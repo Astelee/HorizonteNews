@@ -43,7 +43,6 @@
                 android:textStyle="bold"
                 android:lineSpacingExtra="2sp" />
 
-            <!-- Este campo receberá o "há 2 horas" do PostAdapter -->
             <TextView
                 android:id="@+id/postDate"
                 android:layout_width="match_parent" 
@@ -69,6 +68,17 @@
                 android:scaleType="centerCrop"
                 android:src="@android:color/darker_gray" />
         </androidx.cardview.widget.CardView>
+
+        <ImageButton
+            android:id="@+id/btnSave"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_bookmark_border"
+            android:contentDescription="Salvar notícia"
+            app:tint="#F29121" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
