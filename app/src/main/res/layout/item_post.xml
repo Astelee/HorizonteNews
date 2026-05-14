@@ -1,51 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+package com.horizontenews.app
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.horizontenews.app.databinding.ItemPostHighlightBinding
+import com.horizontenews.app.databinding.ItemPostBinding
 
-        <!-- Imagem grande -->
-        <ImageView
-            android:id="@+id/iv_thumbnail_big"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_placeholder" />
+class PostAdapter(
+    private val posts: List<Post>,
+    private val onItemClick: (Post) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-        <!-- Conteúdo -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+    companion object {
+        private const val VIEW_TYPE_HIGHLIGHT = 0
+        private const val VIEW_TYPE_NORMAL = 1
+    }
 
-            <TextView
-                android:id="@+id/tv_title_big"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:lineSpacingExtra="4dp"
-                android:textColor="#1F1F1F" />
+    override fun getItemViewType(position: Int): Int {
+        // A primeira notícia (posição 0) é o destaque
+        return if (position == 0) VIEW_TYPE_HIGHLIGHT else VIEW_TYPE_NORMAL
+    }
 
-            <TextView
-                android:id="@+id/tv_date_big"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="#666666"
-                android:layout_marginTop="8dp" />
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return if (viewType == VIEW_TYPE_HIGHLIGHT) {
+            val binding = ItemPostHighlightBinding.inflate(inflater, parent, false)
+            HighlightViewHolder(binding)
+        } else {
+            val binding = ItemPostBinding.inflate(inflater, parent, false)
+            NormalViewHolder(binding)
+        }
+    }
 
-        </LinearLayout>
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val post = posts[position]
+        when (holder) {
+            is HighlightViewHolder -> holder.bind(post)
+            is NormalViewHolder -> holder.bind(post)
+        }
+    }
 
-    </LinearLayout>
+    override fun getItemCount() = posts.size
 
-</com.google.android.material.card.MaterialCardView>
+    // ViewHolder para a notícia principal (Destaque - usa o XML que você mandou)
+    inner class HighlightViewHolder(private val binding: ItemPostHighlightBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(post: Post) {
+            binding.tvTitleBig.text = post.title
+            binding.tvDateBig.text = post.getTempoRelativo()
+
+            Glide.with(binding.root.context)
+                .load(post.firstImage() ?: R.drawable.ic_placeholder)
+                .into(binding.ivThumbnailBig)
+
+            binding.root.setOnClickListener { onItemClick(post) }
+        }
+    }
+
+    // ViewHolder para as notícias menores da lista
+    inner class NormalViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(post: Post) {
+            // Se os IDs do seu item_post.xml (o pequeno) forem diferentes, ajuste aqui:
+            binding.tvTitle.text = post.title
+            binding.tvDate.text = post.getTempoRelativo()
+
+            Glide.with(binding.root.context)
+                .load(post.firstImage() ?: R.drawable.ic_placeholder)
+                .centerCrop()
+                .into(binding.ivThumbnail)
+
+            binding.root.setOnClickListener { onItemClick(post) }
+        }
+    }
+}
