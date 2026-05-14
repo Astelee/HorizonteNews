@@ -1,62 +1,67 @@
-package com.astelee.horizontenews  // ← Mude se o seu package for diferente
+package com.horizontenews.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
-import com.astelee.horizontenews.model.Article  // Ajuste o import conforme seu projeto
 
 class DetailActivity : AppCompatActivity() {
-
-    private lateinit var article: Article
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // Configurar Toolbar
-        setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Detalhes"
+        // Captura os dados da Intent
+        val title = intent.getStringExtra("postTitle") ?: ""
+        val content = intent.getStringExtra("postContent") ?: ""
+        val image = intent.getStringExtra("postImage") ?: ""
+        val tempoRelativo = intent.getStringExtra("postDate") ?: ""
+        val category = intent.getStringExtra("postCategory") ?: "Notícia"
 
-        // Receber dados da notícia
-        article = intent.getParcelableExtra("article") ?: run {
-            finish()
-            return
-        }
+        // Views
+        val tvTitle = findViewById<TextView>(R.id.postTitleDetail)
+        val tvContent = findViewById<TextView>(R.id.postContentDetail)
+        val tvDate = findViewById<TextView>(R.id.postDateDetail)
+        val tvCategory = findViewById<TextView>(R.id.postCategoryDetail)
+        val ivImage = findViewById<ImageView>(R.id.postImageDetail)
 
-        // Bind das views
-        val ivNewsImage: ImageView = findViewById(R.id.iv_news_image)
-        val tvTitle: TextView = findViewById(R.id.tv_title)
-        val tvDate: TextView = findViewById(R.id.tv_date)
-        val tvContent: TextView = findViewById(R.id.tv_content)
+        val btnBack = findViewById<ImageButton>(R.id.btn_back)
+        val btnShare = findViewById<ImageButton>(R.id.btn_share)
 
-        // Preencher dados
-        tvTitle.text = article.title
-        tvDate.text = article.publishedAt ?: "Data não disponível"
-        tvContent.text = article.content ?: article.description ?: "Conteúdo não disponível"
+        // Preenche os dados
+        tvTitle.text = title
+        tvCategory.text = category.uppercase()
+        tvDate.text = "Publicado $tempoRelativo"
 
-        // Carregar imagem
-        article.urlToImage?.let { url ->
-            Glide.with(this)
-                .load(url)
-                .placeholder(R.drawable.placeholder_news)  // Crie esse drawable se não tiver
-                .error(R.drawable.placeholder_news)
-                .into(ivNewsImage)
-        }
-    }
+        // Limpa HTML
+        val cleanContent = content.replace(Regex("<img[^>]*>"), "")
+            .replace("\uFFFC", "")
+            .replace("￼", "")
+            .trim()
 
-    // Botão voltar da toolbar
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
+        tvContent.text = HtmlCompat.fromHtml(cleanContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        // Carrega imagem
+        Glide.with(this)
+            .load(image)
+            .placeholder(android.R.color.darker_gray)
+            .centerCrop()
+            .into(ivImage)
+
+        // Botão voltar
+        btnBack.setOnClickListener { finish() }
+
+        // Botão compartilhar
+        btnShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "$title\n\nConfira essa notícia no Horizonte News!")
             }
-            else -> super.onOptionsItemSelected(item)
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia"))
         }
     }
 }
