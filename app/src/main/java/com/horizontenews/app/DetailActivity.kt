@@ -15,7 +15,7 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // Captura os dados da Intent
+        // Captura os dados
         val title = intent.getStringExtra("postTitle") ?: ""
         val content = intent.getStringExtra("postContent") ?: ""
         val image = intent.getStringExtra("postImage") ?: ""
@@ -59,9 +59,9 @@ class DetailActivity : AppCompatActivity() {
         btnShare.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, "$title\n\nConfira essa notícia no Horizonte News!")
+                putExtra(Intent.EXTRA_TEXT, "$title\n\nConfira no Horizonte News!")
             }
-            startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia"))
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar"))
         }
     }
 }
