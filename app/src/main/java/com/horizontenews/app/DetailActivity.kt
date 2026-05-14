@@ -3,78 +3,71 @@ package com.horizontenews.app
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.text.HtmlCompat
+import com.bumptech.glide.Glide
 
 class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_detail)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        // 1. Captura os dados vindos do Adapter (já formatados pelo PostAdapter)
+        val title = intent.getStringExtra("postTitle") ?: ""
+        val content = intent.getStringExtra("postContent") ?: ""
+        val image = intent.getStringExtra("postImage") ?: ""
+        val tempoRelativo = intent.getStringExtra("postDate") ?: "" 
+        val category = intent.getStringExtra("postCategory") ?: "Notícia"
 
-        setSupportActionBar(toolbar)
+        // 2. Mapeia os componentes do layout
+        val tvTitle = findViewById<TextView>(R.id.postTitleDetail)
+        val tvContent = findViewById<TextView>(R.id.postContentDetail)
+        val tvDate = findViewById<TextView>(R.id.postDateDetail)
+        val tvCategory = findViewById<TextView>(R.id.postCategoryDetail)
+        val ivImage = findViewById<ImageView>(R.id.postImageDetail)
+        val btnBack = findViewById<ImageButton>(R.id.btn_back)
+        val btnShare = findViewById<ImageButton>(R.id.btn_share)
 
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        // Permite copiar texto
+        tvTitle.setTextIsSelectable(true)
+        tvContent.setTextIsSelectable(true)
 
-        val btnBack =
-            findViewById<ImageButton>(R.id.btn_back)
+        // 3. Define os textos (Removi a lógica de SimpleDateFormat que causava o erro)
+        tvTitle.text = title
+        tvCategory.text = category.uppercase()
+        
+        // CORREÇÃO: Agora exibe apenas "Publicado há 8 horas" sem o "em:"
+        tvDate.text = "Publicado $tempoRelativo"
 
-        val btnShare =
-            findViewById<ImageButton>(R.id.btn_share)
+        // 4. Limpeza do HTML
+        val htmlWithoutImages = content.replace(Regex("<img[^>]*>"), "")
+        val cleanContent = htmlWithoutImages
+            .replace("\uFFFC", "")
+            .replace("￼", "")
+            .trim()
 
-        btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+        val formattedContent = HtmlCompat.fromHtml(cleanContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        tvContent.text = formattedContent.trim()
+
+        // 5. Carrega a Imagem Principal
+        Glide.with(this)
+            .load(image)
+            .placeholder(android.R.color.darker_gray)
+            .centerCrop()
+            .into(ivImage)
+
+        // 6. Configurações dos Botões
+        btnBack.setOnClickListener { finish() }
 
         btnShare.setOnClickListener {
-
-            val shareIntent = Intent().apply {
-
-                action = Intent.ACTION_SEND
-
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    "Confira esta matéria no Horizonte News!"
-                )
-
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "$title\n\nConfira essa notícia completa no Horizonte News!")
             }
-
-            startActivity(
-                Intent.createChooser(
-                    shareIntent,
-                    "Compartilhar via"
-                )
-            )
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar notícia"))
         }
-
-        val title =
-            intent.getStringExtra("title")
-                ?: "Sem título"
-
-        val content =
-            intent.getStringExtra("content")
-                ?: "Conteúdo não disponível"
-
-        val date =
-            intent.getStringExtra("date")
-                ?: ""
-
-        findViewById<TextView>(
-            R.id.postTitleDetail
-        ).text = title
-
-        findViewById<TextView>(
-            R.id.postContentDetail
-        ).text = content
-
-        findViewById<TextView>(
-            R.id.postDateDetail
-        ).text = date
     }
 }
