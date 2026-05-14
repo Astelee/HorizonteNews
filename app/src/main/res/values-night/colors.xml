@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Cores para o Modo Escuro -->
+
+    <!-- Cores Modo Escuro -->
     <color name="white">#121212</color>
     <color name="black">#FFFFFF</color>
     <color name="background">#121212</color>
@@ -12,7 +13,10 @@
     <color name="divider">#333333</color>
     <color name="grey_border">#444444</color>
 
-    <!-- Laranja principal -->
+    <!-- Laranja mantido -->
     <color name="orange_main">#FF6800</color>
+    <color name="orange_news">#F29121</color>
+    <color name="orange_dark">#E67E22</color>
     <color name="colorPrimary">#FF6800</color>
+
 </resources>
