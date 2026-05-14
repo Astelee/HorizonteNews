@@ -6,21 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 
 class PostAdapter(
     private var posts: List<Post>,
-    private val onSaveClick: (Post, Boolean) -> Unit,
+    private val onSaveClick: (Post, Boolean, (Boolean) -> Unit) -> Unit,
     private val getSavedStatus: (Post) -> Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val savedStatusCache = mutableMapOf<String, Boolean>()
+    private val loadingStatus = mutableMapOf<String, Boolean>()
 
     init {
         posts.forEach { post ->
             savedStatusCache[post.url] = getSavedStatus(post)
+            loadingStatus[post.url] = false
         }
     }
 
@@ -42,6 +47,7 @@ class PostAdapter(
         val post = posts[position]
         val tempoRelativo = post.getTempoRelativo()
         val isSaved = savedStatusCache[post.url] ?: false
+        val isLoading = loadingStatus[post.url] ?: false
 
         if (holder is HighlightViewHolder) {
             holder.title.text = post.title
@@ -54,12 +60,40 @@ class PostAdapter(
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.image)
 
-            updateSaveButtonIcon(holder.btnSave, isSaved)
+            updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, isLoading)
+            
             holder.btnSave.setOnClickListener {
-                val newStatus = !isSaved
-                savedStatusCache[post.url] = newStatus
-                updateSaveButtonIcon(holder.btnSave, newStatus)
-                onSaveClick(post, newStatus)
+                if (!isLoading) {
+                    val newStatus = !isSaved
+                    loadingStatus[post.url] = true
+                    updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, true)
+                    
+                    onSaveClick(post, newStatus) { success ->
+                        loadingStatus[post.url] = false
+                        if (success) {
+                            savedStatusCache[post.url] = newStatus
+                            updateSaveButtonState(holder.btnSave, holder.progressBar, newStatus, false)
+                            
+                            // Mostrar Snackbar com botão
+                            val message = if (newStatus) {
+                                "✅ Foi adicionado na lista de salvos"
+                            } else {
+                                "🗑️ Removido da lista de salvos"
+                            }
+                            
+                            Snackbar.make(holder.itemView, message, Snackbar.LENGTH_LONG)
+                                .setAction("VER") {
+                                    val intent = Intent(holder.itemView.context, SavedArticlesActivity::class.java)
+                                    holder.itemView.context.startActivity(intent)
+                                }
+                                .setActionTextColor(holder.itemView.context.getColor(R.color.orange))
+                                .show()
+                        } else {
+                            updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, false)
+                            Snackbar.make(holder.itemView, "Erro ao salvar. Tente novamente.", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
 
         } else if (holder is NormalViewHolder) {
@@ -73,12 +107,39 @@ class PostAdapter(
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.image)
 
-            updateSaveButtonIcon(holder.btnSave, isSaved)
+            updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, isLoading)
+            
             holder.btnSave.setOnClickListener {
-                val newStatus = !isSaved
-                savedStatusCache[post.url] = newStatus
-                updateSaveButtonIcon(holder.btnSave, newStatus)
-                onSaveClick(post, newStatus)
+                if (!isLoading) {
+                    val newStatus = !isSaved
+                    loadingStatus[post.url] = true
+                    updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, true)
+                    
+                    onSaveClick(post, newStatus) { success ->
+                        loadingStatus[post.url] = false
+                        if (success) {
+                            savedStatusCache[post.url] = newStatus
+                            updateSaveButtonState(holder.btnSave, holder.progressBar, newStatus, false)
+                            
+                            val message = if (newStatus) {
+                                "✅ Foi adicionado na lista de salvos"
+                            } else {
+                                "🗑️ Removido da lista de salvos"
+                            }
+                            
+                            Snackbar.make(holder.itemView, message, Snackbar.LENGTH_LONG)
+                                .setAction("VER") {
+                                    val intent = Intent(holder.itemView.context, SavedArticlesActivity::class.java)
+                                    holder.itemView.context.startActivity(intent)
+                                }
+                                .setActionTextColor(holder.itemView.context.getColor(R.color.orange))
+                                .show()
+                        } else {
+                            updateSaveButtonState(holder.btnSave, holder.progressBar, isSaved, false)
+                            Snackbar.make(holder.itemView, "Erro ao salvar. Tente novamente.", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         }
 
@@ -95,11 +156,18 @@ class PostAdapter(
         }
     }
 
-    private fun updateSaveButtonIcon(button: ImageButton, isSaved: Boolean) {
-        if (isSaved) {
-            button.setImageResource(R.drawable.ic_bookmark_filled)
+    private fun updateSaveButtonState(button: ImageButton, progressBar: ProgressBar, isSaved: Boolean, isLoading: Boolean) {
+        if (isLoading) {
+            button.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
         } else {
-            button.setImageResource(R.drawable.ic_bookmark_border)
+            button.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+            if (isSaved) {
+                button.setImageResource(R.drawable.ic_bookmark_filled)
+            } else {
+                button.setImageResource(R.drawable.ic_bookmark_border)
+            }
         }
     }
 
@@ -108,8 +176,10 @@ class PostAdapter(
     fun updatePosts(newPosts: List<Post>) {
         this.posts = newPosts
         savedStatusCache.clear()
+        loadingStatus.clear()
         posts.forEach { post ->
             savedStatusCache[post.url] = getSavedStatus(post)
+            loadingStatus[post.url] = false
         }
         notifyDataSetChanged()
     }
@@ -127,6 +197,7 @@ class PostAdapter(
         val image: ImageView = view.findViewById(R.id.ivHighlight)
         val date: TextView = view.findViewById(R.id.tvDateHighlight)
         val btnSave: ImageButton = view.findViewById(R.id.btnSaveHighlight)
+        val progressBar: ProgressBar = view.findViewById(R.id.progressSaveHighlight)
     }
 
     class NormalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -135,5 +206,6 @@ class PostAdapter(
         val image: ImageView = view.findViewById(R.id.postImage)
         val date: TextView = view.findViewById(R.id.postDate)
         val btnSave: ImageButton = view.findViewById(R.id.btnSave)
+        val progressBar: ProgressBar = view.findViewById(R.id.progressSave)
     }
 }
