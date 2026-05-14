@@ -2,7 +2,6 @@ package com.horizontenews.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,20 +13,18 @@ import java.io.File
 
 class ConfiguracoesActivity : AppCompatActivity() {
 
+    private var notificacoesAtivadas = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configuracoes)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
-        toolbar.setNavigationOnClickListener { finish() }
-
-        // Botão de engrenagem no topo
-        val btnEngrenagem = findViewById<ImageView>(R.id.btn_engrenagem)
-        btnEngrenagem.setOnClickListener {
-            startActivity(Intent(this, ThemeActivity::class.java))
+        toolbar.setNavigationOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
-        // RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -40,25 +37,25 @@ class ConfiguracoesActivity : AppCompatActivity() {
             ),
             ConfigItem(
                 title = "Notificações",
-                subtitle = "Gerenciar alertas de notícias",
+                subtitle = "Ativadas / Desativadas",
                 icon = android.R.drawable.ic_dialog_info,
-                action = { abrirNotificacoes() }
+                action = { toggleNotificacoes() }
             ),
             ConfigItem(
                 title = "Tamanho do texto",
-                subtitle = "Ajustar tamanho da fonte",
+                subtitle = "Ajustar fonte",
                 icon = android.R.drawable.ic_menu_edit,
-                action = { ajustarTamanhoTexto() }
+                action = { Toast.makeText(this, "Em breve", Toast.LENGTH_SHORT).show() }
             ),
             ConfigItem(
                 title = "Limpar cache",
-                subtitle = "Liberar espaço armazenado",
+                subtitle = "Liberar espaço",
                 icon = android.R.drawable.ic_menu_delete,
                 action = { limparCache() }
             ),
             ConfigItem(
                 title = "Sobre o app",
-                subtitle = "Versão 1.0 • Horizonte News",
+                subtitle = "Versão 1.0",
                 icon = android.R.drawable.ic_dialog_info,
                 action = { mostrarSobre() }
             )
@@ -67,29 +64,16 @@ class ConfiguracoesActivity : AppCompatActivity() {
         recyclerView.adapter = ConfiguracoesAdapter(items)
     }
 
-    private fun abrirNotificacoes() {
-        FirebaseMessaging.getInstance().subscribeToTopic("Geral")
-        Toast.makeText(this, "✅ Notificações ativadas!", Toast.LENGTH_LONG).show()
-    }
+    private fun toggleNotificacoes() {
+        notificacoesAtivadas = !notificacoesAtivadas
 
-    private fun ajustarTamanhoTexto() {
-        val options = arrayOf("Pequeno", "Médio (Padrão)", "Grande")
-        AlertDialog.Builder(this)
-            .setTitle("Tamanho do texto")
-            .setItems(options) { _, which ->
-                val scale = when (which) {
-                    0 -> 0.85f
-                    1 -> 1.0f
-                    2 -> 1.18f
-                    else -> 1.0f
-                }
-                getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
-                    .putFloat("font_scale", scale).apply()
-                
-                Toast.makeText(this, "Tamanho alterado! Reinicie o app.", Toast.LENGTH_LONG).show()
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        if (notificacoesAtivadas) {
+            FirebaseMessaging.getInstance().subscribeToTopic("Geral")
+            Toast.makeText(this, "✅ Notificações ATIVADAS", Toast.LENGTH_LONG).show()
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("Geral")
+            Toast.makeText(this, "❌ Notificações DESATIVADAS", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun limparCache() {
@@ -103,17 +87,15 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
     private fun deleteDir(dir: File?): Boolean {
         if (dir != null && dir.isDirectory) {
-            dir.listFiles()?.forEach { child ->
-                deleteDir(child)
-            }
+            dir.listFiles()?.forEach { deleteDir(it) }
         }
         return dir?.delete() ?: false
     }
 
     private fun mostrarSobre() {
         AlertDialog.Builder(this)
-            .setTitle("Sobre Horizonte News")
-            .setMessage("Versão 1.0\n\nJornal local de Horizonte - Ceará\n\nDesenvolvido para a comunidade.")
+            .setTitle("Horizonte News")
+            .setMessage("Versão 1.0\nJornal local de Horizonte - Ceará")
             .setPositiveButton("OK", null)
             .show()
     }
