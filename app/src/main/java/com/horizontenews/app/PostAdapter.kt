@@ -13,26 +13,26 @@ class PostAdapter(
     private var posts: List<Post>,
     private val onSaveClick: (Post, Boolean, (Boolean) -> Unit) -> Unit,
     private val getSavedStatus: (Post) -> Boolean,
-    private val onItemClick: (Post) -> Unit
+    private val onItemClick: (Post) -> Unit // Esta é a função que falta na SearchActivity
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Usando findViewById para garantir compatibilidade com seu XML atual
-        private val tvTitle: TextView = itemView.findViewById(R.id.tv_post_title)
-        private val ivImage: ImageView = itemView.findViewById(R.id.iv_post_image)
-        private val btnSave: ImageButton = itemView.findViewById(R.id.btn_save) // Certifique-se que este ID existe no item_post.xml
+        val tvTitle: TextView = itemView.findViewById(R.id.tv_post_title)
+        val ivImage: ImageView = itemView.findViewById(R.id.iv_post_image)
+        
+        // AQUI ESTAVA O ERRO: Certifique-se que no seu item_post.xml o ID seja btn_save
+        // Se o nome no XML for diferente, mude o R.id.btn_save abaixo para o nome que está lá
+        val btnSave: ImageButton = itemView.findViewById(R.id.btn_save)
 
         fun bind(post: Post) {
             tvTitle.text = post.title
             
-            // Carrega a imagem da notícia
             Glide.with(itemView.context)
                 .load(post.firstImage())
                 .placeholder(android.R.color.darker_gray)
                 .centerCrop()
                 .into(ivImage)
 
-            // Lógica do botão Salvar (Favoritos)
             var isSaved = getSavedStatus(post)
             updateSaveIcon(btnSave, isSaved)
 
@@ -46,7 +46,6 @@ class PostAdapter(
                 }
             }
 
-            // Clique na notícia para abrir detalhes
             itemView.setOnClickListener {
                 onItemClick(post)
             }
@@ -69,7 +68,6 @@ class PostAdapter(
 
     override fun getItemCount(): Int = posts.size
 
-    // Funções que a sua MainActivity chama para atualizar a lista
     fun updatePosts(newPosts: List<Post>) {
         this.posts = newPosts
         notifyDataSetChanged()
