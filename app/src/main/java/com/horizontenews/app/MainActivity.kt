@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         verificarPermissaoNotificacao()
         FirebaseMessaging.getInstance().subscribeToTopic("Geral")
 
-        // Configurações da Toolbar
+        // Configurações da Toolbar (com nova cor #FF6800)
         setupToolbar()
 
         // Inicialização dos componentes
@@ -71,11 +71,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // SwipeRefresh
-        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#F29121"))
+        // SwipeRefresh com cor laranja principal
+        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF6800"))
         swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
 
-        // Carrega as notícias
+        // Carrega as notícias iniciais
         fetchPosts()
     }
 
@@ -108,12 +108,14 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
                     recyclerView.adapter = PostAdapter(posts)
+                } else {
+                    swipeRefreshLayout.isRefreshing = false
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                // TODO: Mostrar mensagem de erro ao usuário
+                // TODO: Mostrar mensagem de erro ao usuário (Snackbar ou Toast)
             }
         })
     }
@@ -123,6 +125,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        window.statusBarColor = Color.parseColor("#F29121")
+        // Nova cor principal do app
+        window.statusBarColor = Color.parseColor("#FF6800")
     }
 }
