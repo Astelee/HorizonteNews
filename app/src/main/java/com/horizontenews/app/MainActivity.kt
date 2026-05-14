@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -56,12 +57,13 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Adapter atualizado com callback
         postAdapter = PostAdapter(emptyList(),
-            onSaveClick = { post, isSaved ->
+            onSaveClick = { post, isSaved, callback ->
                 if (isSaved) {
-                    savePost(post)
+                    savePost(post, callback)
                 } else {
-                    unsavePost(post)
+                    unsavePost(post, callback)
                 }
             },
             getSavedStatus = { post ->
@@ -96,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         fetchPosts()
     }
 
-    private fun savePost(post: Post) {
+    private fun savePost(post: Post, callback: (Boolean) -> Unit) {
         lifecycleScope.launch {
             try {
                 val savedArticle = SavedArticle(
@@ -108,20 +110,20 @@ class MainActivity : AppCompatActivity() {
                     content = post.content
                 )
                 database.savedArticleDao().saveArticle(savedArticle)
-                Toast.makeText(this@MainActivity, "✅ Notícia salva!", Toast.LENGTH_SHORT).show()
+                callback(true)
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Erro ao salvar: ${e.message}", Toast.LENGTH_SHORT).show()
+                callback(false)
             }
         }
     }
 
-    private fun unsavePost(post: Post) {
+    private fun unsavePost(post: Post, callback: (Boolean) -> Unit) {
         lifecycleScope.launch {
             try {
                 database.savedArticleDao().unsaveArticle(post.url)
-                Toast.makeText(this@MainActivity, "❌ Notícia removida dos salvos", Toast.LENGTH_SHORT).show()
+                callback(true)
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Erro ao remover: ${e.message}", Toast.LENGTH_SHORT).show()
+                callback(false)
             }
         }
     }
