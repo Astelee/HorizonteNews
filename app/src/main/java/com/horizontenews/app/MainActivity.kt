@@ -31,48 +31,98 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Força o modo claro
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         setContentView(R.layout.activity_main)
 
+        // Permissões e Notificações
         verificarPermissaoNotificacao()
         FirebaseMessaging.getInstance().subscribeToTopic("Geral")
 
         setupToolbar()
 
+        // Inicialização dos componentes
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        findViewById<LinearLayout>(R.id.btn_home).setOnClickListener {
+        // Botões da barra inferior
+        val btnHome = findViewById<LinearLayout>(R.id.btn_home)
+        val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
+
+        btnHome.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
         }
 
-        findViewById<LinearLayout>(R.id.btn_menu).setOnClickListener {
-            startActivity(Intent(this, ConfiguracoesActivity::class.java))
+        btnMenu.setOnClickListener {
+            val intent = Intent(this, ConfiguracoesActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)  // Animação
         }
 
-        findViewById<ImageButton>(R.id.btn_open_search).setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+        // Botão de Busca
+        val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
+        btnOpenSearch.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)   // Animação
         }
 
+        // SwipeRefresh
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF6800"))
         swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
 
+        // Carrega as notícias
         fetchPosts()
     }
 
-    private fun verificarPermissaoNotificacao() { /* mesmo código anterior */ }
+    private fun verificarPermissaoNotificacao() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this, 
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS), 
+                    101
+                )
+            }
+        }
+    }
 
-    private fun fetchPosts() { /* mesmo código anterior */ }
+    private fun fetchPosts() {
+        swipeRefreshLayout.isRefreshing = true
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.googleapis.com/blogger/v3/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(BloggerService::class.java)
+
+        service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
+            override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
+                swipeRefreshLayout.isRefreshing = false
+                if (response.isSuccessful) {
+                    val posts = response.body()?.items ?: emptyList()
+                    recyclerView.adapter = PostAdapter(posts)
+                }
+            }
+
+            override fun onFailure(call: Call<PostResponse>, t: Throwable) {
+                swipeRefreshLayout.isRefreshing = false
+            }
+        })
+    }
 
     private fun setupToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
         window.statusBarColor = Color.parseColor("#FF6800")
     }
 }
