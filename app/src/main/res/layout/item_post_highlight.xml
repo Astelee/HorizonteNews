@@ -16,7 +16,7 @@
 
         <!-- Imagem à esquerda -->
         <ImageView
-            android:id="@+id/iv_thumbnail_small"
+            android:id="@+id/ivThumbnail"  <!-- MUDADO de iv_thumbnail_small -->
             android:layout_width="100dp"
             android:layout_height="70dp"
             android:scaleType="centerCrop"
@@ -31,7 +31,7 @@
             android:layout_marginStart="12dp">
 
             <TextView
-                android:id="@+id/tv_title_small"
+                android:id="@+id/tvTitle"  <!-- MUDADO de tv_title_small -->
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -41,8 +41,18 @@
                 android:ellipsize="end"
                 android:textColor="#1F1F1F" />
 
+            <!-- ADICIONE O tvLabel AQUI -->
             <TextView
-                android:id="@+id/tv_date_small"
+                android:id="@+id/tvLabel"  <!-- ADICIONADO -->
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#FF5722"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvDate"  <!-- MUDADO de tv_date_small -->
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
