@@ -1,16 +1,22 @@
 package com.horizontenews.app
 
-import android.content.Context
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,45 +25,64 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
-    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 1. Aplica o tema salvo antes do setContentView
-        aplicarTemaSalvo()
-        
         super.onCreate(savedInstanceState)
+
+        // Força modo claro
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         setContentView(R.layout.activity_main)
 
+        verificarPermissaoNotificacao()
+        FirebaseMessaging.getInstance().subscribeToTopic("Geral")
+
+        setupToolbar()
+
         recyclerView = findViewById(R.id.recyclerView)
-        progressBar = findViewById(R.id.progressBar)
-        
-        val btnSearch = findViewById<ImageButton>(R.id.btn_search)
-        val btnSettings = findViewById<ImageButton>(R.id.btn_settings)
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Navegação para busca e configurações
-        btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+        // Bottom bar
+        val btnHome = findViewById<LinearLayout>(R.id.btn_home)
+        val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
+
+        btnHome.setOnClickListener {
+            recyclerView.smoothScrollToPosition(0)
         }
 
-        btnSettings.setOnClickListener {
+        btnMenu.setOnClickListener {
             startActivity(Intent(this, ConfiguracoesActivity::class.java))
         }
 
-        // Carrega as notícias iniciais
+        // Search button
+        val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
+        btnOpenSearch.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
+
+        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#F29121"))
+        swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
+
         fetchPosts()
     }
 
-    private fun aplicarTemaSalvo() {
-        val sharedPref = getSharedPreferences("theme_pref", Context.MODE_PRIVATE)
-        val mode = sharedPref.getInt("app_theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        AppCompatDelegate.setDefaultNightMode(mode)
+    private fun verificarPermissaoNotificacao() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
     }
 
     private fun fetchPosts() {
-        progressBar.visibility = View.VISIBLE
+        swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/blogger/v3/")
@@ -68,25 +93,24 @@ class MainActivity : AppCompatActivity() {
 
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                progressBar.visibility = View.GONE
+                swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
-                    recyclerView.adapter = PostAdapter(posts) { post ->
-                        val intent = Intent(this@MainActivity, DetailActivity::class.java).apply {
-                            putExtra("postTitle", post.title)
-                            putExtra("postContent", post.content)
-                            putExtra("postImage", post.firstImage())
-                            putExtra("postDate", post.getTempoRelativo())
-                        }
-                        startActivity(intent)
-                    }
+                    recyclerView.adapter = PostAdapter(posts)
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                Toast.makeText(this@MainActivity, "Erro ao carregar notícias", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+                // TODO: Mostrar erro para o usuário
             }
         })
+    }
+
+    private fun setupToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        window.statusBarColor = Color.parseColor("#F29121")
     }
 }
