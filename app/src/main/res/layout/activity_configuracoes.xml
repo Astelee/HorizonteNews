@@ -1,50 +1,27 @@
-package com.horizontenews.app
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+    <!-- Toolbar configurada para bater com o ID do seu código Kotlin -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_config"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#0A1E3A"
+        app:title="Configurações"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIcon="@drawable/ic_back_arrow_black" />
 
-class ConfiguracoesActivity : AppCompatActivity() {
+    <!-- RecyclerView para listar as opções (Tema, Compartilhar, Sobre) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_configuracoes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp" />
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_configuracoes)
-
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_config)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        toolbar.setNavigationOnClickListener { finish() }
-
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        val items = listOf(
-            ConfigItem(
-                title = "Tema",
-                iconRes = R.drawable.ic_settings_gear,
-                action = { /* Trocar tema */ }
-            ),
-            ConfigItem(
-                title = "Compartilhar App",
-                iconRes = R.drawable.ic_share_black_custom,
-                action = {
-                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, "Baixe o Horizonte News!")
-                    }
-                    startActivity(Intent.createChooser(shareIntent, "Compartilhar"))
-                }
-            ),
-            ConfigItem(
-                title = "Sobre o App",
-                iconRes = R.drawable.ic_settings_gear, // temporário
-                action = { /* Sobre */ }
-            )
-        )
-
-        recyclerView.adapter = ConfiguracoesAdapter(items)
-    }
-}
+</LinearLayout>
