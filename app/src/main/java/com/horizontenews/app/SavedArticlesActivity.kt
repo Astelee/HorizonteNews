@@ -1,5 +1,6 @@
 package com.horizontenews.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,23 +10,23 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
 class SavedArticlesActivity : AppCompatActivity() {
-    
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: SavedArticlesAdapter
     private lateinit var database: AppDatabase
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_articles)
-        
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Notícias Salvas"
-        
+
         database = AppDatabase.getDatabase(this)
-        
+
         recyclerView = findViewById(R.id.recyclerViewSaved)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        
+
         adapter = SavedArticlesAdapter(emptyList()) { article ->
             try {
                 val intent = Intent(this, DetailActivity::class.java).apply {
@@ -41,10 +42,10 @@ class SavedArticlesActivity : AppCompatActivity() {
             }
         }
         recyclerView.adapter = adapter
-        
+
         loadSavedArticles()
     }
-    
+
     private fun loadSavedArticles() {
         lifecycleScope.launch {
             try {
@@ -59,7 +60,7 @@ class SavedArticlesActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
