@@ -38,10 +38,8 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Inicializar banco de dados
         database = AppDatabase.getDatabase(this)
 
-        // Inicialização dos componentes conforme o XML
         recyclerView = findViewById(R.id.recyclerViewSearch)
         editSearch = findViewById(R.id.edit_search)
         layoutSocial = findViewById(R.id.layout_social_bottom)
@@ -58,14 +56,12 @@ class SearchActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        // Lógica do botão "X" (Limpar)
         btnClear.setOnClickListener {
             editSearch.text.clear()
             tvEmpty.visibility = View.GONE
             layoutSocial.visibility = View.VISIBLE
         }
 
-        // Monitora o texto para mostrar/esconder o "X" em tempo real
         editSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -78,12 +74,10 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Configuração dos links das redes sociais
         btnInsta.setOnClickListener { abrirLink("https://www.instagram.com/horizontenews_/") }
         btnWhats.setOnClickListener { abrirLink("https://wa.me/5585994130806") }
         btnFace.setOnClickListener { abrirLink("https://www.facebook.com/share/1AJNBnodHo/") }
 
-        // Dispara a busca ao clicar na lupa do teclado
         editSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = editSearch.text.toString().trim()
@@ -98,7 +92,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
-        // Estado visual de "Carregando"
         progressBar.visibility = View.VISIBLE
         btnClear.visibility = View.GONE
         tvEmpty.visibility = View.GONE
@@ -124,14 +117,13 @@ class SearchActivity : AppCompatActivity() {
 
                     if (posts.isNotEmpty()) {
                         tvEmpty.visibility = View.GONE
-                        // Adapter corrigido com os 3 parâmetros
                         val adapter = PostAdapter(
                             posts,
-                            onSaveClick = { post, isSaved ->
+                            onSaveClick = { post, isSaved, callback ->
                                 if (isSaved) {
-                                    savePost(post)
+                                    savePost(post, callback)
                                 } else {
-                                    unsavePost(post)
+                                    unsavePost(post, callback)
                                 }
                             },
                             getSavedStatus = { post ->
@@ -143,7 +135,7 @@ class SearchActivity : AppCompatActivity() {
                         tvEmpty.visibility = View.VISIBLE
                         val emptyAdapter = PostAdapter(
                             emptyList(),
-                            onSaveClick = { _, _ -> },
+                            onSaveClick = { _, _, callback -> callback(false) },
                             getSavedStatus = { false }
                         )
                         recyclerView.adapter = emptyAdapter
@@ -161,30 +153,42 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun savePost(post: Post) {
+    private fun savePost(post: Post, callback: (Boolean) -> Unit) {
         lifecycleScope.launch {
-            val savedArticle = SavedArticle(
-                url = post.url,
-                title = post.title,
-                category = post.firstLabel(),
-                imageUrl = post.firstImage() ?: "",
-                date = post.getTempoRelativo(),
-                content = post.content
-            )
-            database.savedArticleDao().saveArticle(savedArticle)
-            (recyclerView.adapter as? PostAdapter)?.notifyDataSetChanged()
+            try {
+                val savedArticle = SavedArticle(
+                    url = post.url,
+                    title = post.title,
+                    category = post.firstLabel(),
+                    imageUrl = post.firstImage() ?: "",
+                    date = post.getTempoRelativo(),
+                    content = post.content
+                )
+                database.savedArticleDao().saveArticle(savedArticle)
+                callback(true)
+            } catch (e: Exception) {
+                callback(false)
+            }
         }
     }
 
-    private fun unsavePost(post: Post) {
+    private fun unsavePost(post: Post, callback: (Boolean) -> Unit) {
         lifecycleScope.launch {
-            database.savedArticleDao().unsaveArticle(post.url)
-            (recyclerView.adapter as? PostAdapter)?.notifyDataSetChanged()
+            try {
+                database.savedArticleDao().unsaveArticle(post.url)
+                callback(true)
+            } catch (e: Exception) {
+                callback(false)
+            }
         }
     }
 
     private suspend fun checkIfSaved(post: Post): Boolean {
-        return database.savedArticleDao().isArticleSaved(post.url)
+        return try {
+            database.savedArticleDao().isArticleSaved(post.url)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun abrirLink(url: String) {
