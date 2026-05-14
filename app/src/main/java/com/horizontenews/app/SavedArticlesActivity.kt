@@ -18,26 +18,59 @@ class SavedArticlesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_saved_articles)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         title = "Notícias Salvas"
 
         database = AppDatabase.getDatabase(this)
 
         recyclerView = findViewById(R.id.recyclerViewSaved)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = SavedArticlesAdapter(emptyList()) { article ->
+        adapter = SavedArticlesAdapter(
+            emptyList()
+        ) { article ->
 
             try {
 
-                val intent = Intent(this, DetailActivity::class.java).apply {
-                    putExtra("postTitle", article.title ?: "")
-                    putExtra("postContent", article.content ?: "")
-                    putExtra("postImage", article.imageUrl ?: "")
-                    putExtra("postDate", article.date ?: "")
-                    putExtra("postCategory", article.category ?: "")
+                val intent = Intent(
+                    this,
+                    DetailActivity::class.java
+                ).apply {
+
+                    putExtra(
+                        "postTitle",
+                        article.title
+                    )
+
+                    putExtra(
+                        "postContent",
+                        article.content
+                    )
+
+                    putExtra(
+                        "postImage",
+                        article.imageUrl
+                    )
+
+                    putExtra(
+                        "postDate",
+                        article.date
+                    )
+
+                    putExtra(
+                        "postCategory",
+                        article.category
+                    )
+
+                    putExtra(
+                        "postUrl",
+                        article.url
+                    )
                 }
 
                 startActivity(intent)
@@ -65,27 +98,19 @@ class SavedArticlesActivity : AppCompatActivity() {
 
             try {
 
-                database.savedArticleDao()
+                database
+                    .savedArticleDao()
                     .getAllSavedArticles()
                     .collectLatest { savedList ->
 
                         adapter.updateArticles(savedList)
-
-                        if (savedList.isEmpty()) {
-
-                            Toast.makeText(
-                                this@SavedArticlesActivity,
-                                "Nenhuma notícia salva",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
                     }
 
             } catch (e: Exception) {
 
                 Toast.makeText(
                     this@SavedArticlesActivity,
-                    "Erro ao carregar: ${e.message}",
+                    "Erro ao carregar notícias",
                     Toast.LENGTH_LONG
                 ).show()
 
@@ -95,7 +120,9 @@ class SavedArticlesActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+
         finish()
+
         return true
     }
 }
