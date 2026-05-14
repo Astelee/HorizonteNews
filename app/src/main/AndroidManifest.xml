@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.horizontenews.app">
 
+    <!-- Permissões essenciais para um app de notícias -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -14,36 +16,44 @@
         android:theme="@style/Theme.HorizonteNews"
         android:usesCleartextTraffic="true">
 
+        <!-- Tela de Abertura / Principal -->
         <activity
-            android:name="com.horizontenews.app.MainActivity"
-            android:exported="true">
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Tela de Leitura da Notícia -->
         <activity
-            android:name="com.horizontenews.app.DetailActivity"
-            android:exported="false" />
-
-        <activity
-            android:name="com.horizontenews.app.SearchActivity"
+            android:name=".DetailActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Tela de Busca (Lupa) -->
         <activity
-            android:name="com.horizontenews.app.ConfiguracoesActivity"
+            android:name=".SearchActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Tela de Configurações -->
         <activity
-            android:name="com.horizontenews.app.ThemeActivity"
+            android:name=".ConfiguracoesActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Tela de Temas (Se ainda for usar) -->
+        <activity
+            android:name=".ThemeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Serviço de Notificações Push (Firebase) -->
         <service
-            android:name="com.horizontenews.app.MyFirebaseMessagingService"
+            android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
