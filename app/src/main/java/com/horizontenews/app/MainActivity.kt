@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,30 +37,25 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Força o modo claro
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         setContentView(R.layout.activity_main)
 
-        // Inicializar banco de dados
         database = AppDatabase.getDatabase(this)
 
-        // Permissões e Notificações
         verificarPermissaoNotificacao()
         FirebaseMessaging.getInstance().subscribeToTopic("Geral")
 
         setupToolbar()
 
-        // Inicialização dos componentes
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Adapter vazio inicialmente
-        postAdapter = PostAdapter(emptyList(), 
+        postAdapter = PostAdapter(emptyList(),
             onSaveClick = { post, isSaved ->
                 if (isSaved) {
                     savePost(post)
@@ -68,12 +64,11 @@ class MainActivity : AppCompatActivity() {
                 }
             },
             getSavedStatus = { post ->
-                checkIfSaved(post)
+                runBlocking { checkIfSaved(post) }
             }
         )
         recyclerView.adapter = postAdapter
 
-        // Botões da barra inferior
         val btnHome = findViewById<LinearLayout>(R.id.btn_home)
         val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
 
@@ -87,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
-        // Botão de Busca
         val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
         btnOpenSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
@@ -95,11 +89,9 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
         }
 
-        // SwipeRefresh
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF6800"))
         swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
 
-        // Carrega as notícias
         fetchPosts()
     }
 
@@ -109,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 url = post.url,
                 title = post.title,
                 category = post.firstLabel(),
-                imageUrl = post.firstImage(),
+                imageUrl = post.firstImage() ?: "",
                 date = post.getTempoRelativo(),
                 content = post.content
             )
@@ -171,13 +163,11 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
         window.statusBarColor = Color.parseColor("#FF6800")
     }
 
     override fun onResume() {
         super.onResume()
-        // Atualizar status de salvamento quando voltar de outras telas
         postAdapter.notifyDataSetChanged()
     }
 }
