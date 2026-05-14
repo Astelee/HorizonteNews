@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Força modo escuro
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Removido forçamento de modo escuro - agora respeita a escolha do sistema / ThemeActivity
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         setContentView(R.layout.activity_main)
 
@@ -178,7 +178,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        window.statusBarColor = Color.parseColor("#FF6800")
+        // Deixa o sistema controlar a cor da status bar
+        // window.statusBarColor = Color.parseColor("#FF6800")
     }
 
     override fun onResume() {
