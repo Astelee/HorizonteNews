@@ -1,14 +1,16 @@
 package com.horizontenews.app
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
-import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,62 +20,44 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var adapter: PostAdapter
-    private var postList = mutableListOf<Post>()
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 1. Aplica o tema salvo antes do setContentView
+        aplicarTemaSalvo()
+        
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Vinculando os componentes do XML com IDs exatos
         recyclerView = findViewById(R.id.recyclerView)
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        val btnSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        val btnHome = findViewById<LinearLayout>(R.id.btn_home)
-        val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
+        progressBar = findViewById(R.id.progressBar)
+        
+        val btnSearch = findViewById<ImageButton>(R.id.btn_search)
+        val btnSettings = findViewById<ImageButton>(R.id.btn_settings)
 
-        // Configurando a lista
         recyclerView.layoutManager = LinearLayoutManager(this)
-        setupAdapter()
 
-        // Configurando o "Puxar para atualizar"
-        swipeRefreshLayout.setOnRefreshListener {
-            fetchPosts()
-        }
-
-        // Configurando os cliques
-        btnSearch?.setOnClickListener {
+        // Navegação para busca e configurações
+        btnSearch.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        btnMenu?.setOnClickListener {
-            // Abre a tela de configurações (verifique se o nome da classe está correto)
+        btnSettings.setOnClickListener {
             startActivity(Intent(this, ConfiguracoesActivity::class.java))
         }
 
-        btnHome?.setOnClickListener {
-            recyclerView.smoothScrollToPosition(0)
-        }
-
+        // Carrega as notícias iniciais
         fetchPosts()
     }
 
-    private fun setupAdapter() {
-        adapter = PostAdapter(postList) { post ->
-            val intent = Intent(this, DetailActivity::class.java).apply {
-                putExtra("postTitle", post.title)
-                putExtra("postContent", post.content)
-                putExtra("postImage", post.firstImage())
-                putExtra("postDate", post.getTempoRelativo())
-            }
-            startActivity(intent)
-        }
-        recyclerView.adapter = adapter
+    private fun aplicarTemaSalvo() {
+        val sharedPref = getSharedPreferences("theme_pref", Context.MODE_PRIVATE)
+        val mode = sharedPref.getInt("app_theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun fetchPosts() {
-        swipeRefreshLayout.isRefreshing = true
+        progressBar.visibility = View.VISIBLE
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/blogger/v3/")
@@ -84,20 +68,24 @@ class MainActivity : AppCompatActivity() {
 
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                swipeRefreshLayout.isRefreshing = false
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
-                    postList.clear()
-                    postList.addAll(posts)
-                    adapter.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(this@MainActivity, "Erro ao carregar dados", Toast.LENGTH_SHORT).show()
+                    recyclerView.adapter = PostAdapter(posts) { post ->
+                        val intent = Intent(this@MainActivity, DetailActivity::class.java).apply {
+                            putExtra("postTitle", post.title)
+                            putExtra("postContent", post.content)
+                            putExtra("postImage", post.firstImage())
+                            putExtra("postDate", post.getTempoRelativo())
+                        }
+                        startActivity(intent)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                swipeRefreshLayout.isRefreshing = false
-                Toast.makeText(this@MainActivity, "Falha na conexão", Toast.LENGTH_SHORT).show()
+                progressBar.visibility = View.GONE
+                Toast.makeText(this@MainActivity, "Erro ao carregar notícias", Toast.LENGTH_SHORT).show()
             }
         })
     }
