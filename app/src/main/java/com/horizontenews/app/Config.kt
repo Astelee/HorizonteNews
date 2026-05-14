@@ -1,12 +1,14 @@
 package com.horizontenews.app
 
 object Config {
+    const val API_KEY = "AIzaSyDb6MknWP57bdQ7MwWBuX8xaVWxlRv0Fmo"
     const val BLOG_ID = "7479654571398345888"
-
-    // ✅ Chave segura vinda do local.properties (BuildConfig)
-    const val API_KEY = BuildConfig.BLOGGER_API_KEY
-
-    const val APP_NAME = "Horizonte News"
-    const val PRIMARY_COLOR = "#FF6800"
-    const val BASE_URL = "https://www.googleapis.com/blogger/v3/"
+    
+    // ==================== NOVAS CONFIGURAÇÕES VISUAIS ====================
+    const val APP_NAME = "HORIZONTE NEWS"
+    
+    // Cores principais (usadas no tema)
+    const val PRIMARY_COLOR = 0xFF0A1E3A   // Azul escuro (header)
+    const val ACCENT_COLOR = 0xFFE87722    // Laranja/dourado (detalhes)
+    const val TEXT_PRIMARY = 0xFF1E1E1E
 }
