@@ -13,10 +13,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
+    private lateinit var postAdapter: PostAdapter
+    private var postsList: List<Post> = emptyList()
+    private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
+
+        // Inicializar banco de dados
+        database = AppDatabase.getDatabase(this)
 
         // Permissões e Notificações
         verificarPermissaoNotificacao()
@@ -50,6 +58,21 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Adapter vazio inicialmente
+        postAdapter = PostAdapter(emptyList(), 
+            onSaveClick = { post, isSaved ->
+                if (isSaved) {
+                    savePost(post)
+                } else {
+                    unsavePost(post)
+                }
+            },
+            getSavedStatus = { post ->
+                checkIfSaved(post)
+            }
+        )
+        recyclerView.adapter = postAdapter
+
         // Botões da barra inferior
         val btnHome = findViewById<LinearLayout>(R.id.btn_home)
         val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
@@ -61,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         btnMenu.setOnClickListener {
             val intent = Intent(this, ConfiguracoesActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)  // Animação
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         // Botão de Busca
@@ -69,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         btnOpenSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)   // Animação
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
         }
 
         // SwipeRefresh
@@ -78,6 +101,32 @@ class MainActivity : AppCompatActivity() {
 
         // Carrega as notícias
         fetchPosts()
+    }
+
+    private fun savePost(post: Post) {
+        lifecycleScope.launch {
+            val savedArticle = SavedArticle(
+                url = post.url,
+                title = post.title,
+                category = post.firstLabel(),
+                imageUrl = post.firstImage(),
+                date = post.getTempoRelativo(),
+                content = post.content
+            )
+            database.savedArticleDao().saveArticle(savedArticle)
+            postAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun unsavePost(post: Post) {
+        lifecycleScope.launch {
+            database.savedArticleDao().unsaveArticle(post.url)
+            postAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private suspend fun checkIfSaved(post: Post): Boolean {
+        return database.savedArticleDao().isArticleSaved(post.url)
     }
 
     private fun verificarPermissaoNotificacao() {
@@ -107,8 +156,8 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 swipeRefreshLayout.isRefreshing = false
                 if (response.isSuccessful) {
-                    val posts = response.body()?.items ?: emptyList()
-                    recyclerView.adapter = PostAdapter(posts)
+                    postsList = response.body()?.items ?: emptyList()
+                    postAdapter.updatePosts(postsList)
                 }
             }
 
@@ -124,5 +173,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         window.statusBarColor = Color.parseColor("#FF6800")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Atualizar status de salvamento quando voltar de outras telas
+        postAdapter.notifyDataSetChanged()
     }
 }
