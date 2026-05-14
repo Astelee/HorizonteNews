@@ -11,4 +11,10 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <!-- AppBar Overlay -->
+    <style name="Theme.HorizonteNews.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Popup Overlay -->
+    <style name="Theme.HorizonteNews.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>
