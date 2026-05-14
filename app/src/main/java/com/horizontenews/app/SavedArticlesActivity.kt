@@ -1,6 +1,7 @@
 package com.horizontenews.app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,15 +27,18 @@ class SavedArticlesActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         
         adapter = SavedArticlesAdapter(emptyList()) { article ->
-            // Abrir detalhe da notícia salva
-            val intent = android.content.Intent(this, DetailActivity::class.java).apply {
-                putExtra("postTitle", article.title)
-                putExtra("postContent", article.content)
-                putExtra("postImage", article.imageUrl)
-                putExtra("postDate", article.date)
-                putExtra("postCategory", article.category)
+            try {
+                val intent = Intent(this, DetailActivity::class.java).apply {
+                    putExtra("postTitle", article.title)
+                    putExtra("postContent", article.content)
+                    putExtra("postImage", article.imageUrl)
+                    putExtra("postDate", article.date)
+                    putExtra("postCategory", article.category)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Erro ao abrir notícia", Toast.LENGTH_SHORT).show()
             }
-            startActivity(intent)
         }
         recyclerView.adapter = adapter
         
@@ -43,8 +47,15 @@ class SavedArticlesActivity : AppCompatActivity() {
     
     private fun loadSavedArticles() {
         lifecycleScope.launch {
-            database.savedArticleDao().getAllSavedArticles().collect { articles ->
-                adapter.updateArticles(articles)
+            try {
+                database.savedArticleDao().getAllSavedArticles().collect { articles ->
+                    adapter.updateArticles(articles)
+                    if (articles.isEmpty()) {
+                        Toast.makeText(this@SavedArticlesActivity, "Nenhuma notícia salva", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@SavedArticlesActivity, "Erro ao carregar salvos: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
