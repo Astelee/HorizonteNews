@@ -13,8 +13,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,10 +31,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var btnClear: ImageButton
     private lateinit var progressBar: ProgressBar
     private lateinit var tvEmpty: TextView
+    private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        // Inicializar banco de dados
+        database = AppDatabase.getDatabase(this)
 
         // Inicialização dos componentes conforme o XML
         recyclerView = findViewById(R.id.recyclerViewSearch)
@@ -41,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
         btnClear = findViewById(R.id.btn_clear_search)
         progressBar = findViewById(R.id.progress_search)
         tvEmpty = findViewById(R.id.tv_empty_search)
-        
+
         val btnBack = findViewById<ImageButton>(R.id.btn_back_search)
         val btnInsta = findViewById<ImageButton>(R.id.btn_insta)
         val btnWhats = findViewById<ImageButton>(R.id.btn_whatsapp)
@@ -55,7 +61,6 @@ class SearchActivity : AppCompatActivity() {
         btnClear.setOnClickListener {
             editSearch.text.clear()
             tvEmpty.visibility = View.GONE
-            // Opcional: mostrar novamente as redes sociais ao limpar
             layoutSocial.visibility = View.VISIBLE
         }
 
@@ -108,21 +113,39 @@ class SearchActivity : AppCompatActivity() {
         service.searchPosts(Config.BLOG_ID, query, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 progressBar.visibility = View.GONE
-                
-                // Só volta a mostrar o X se o campo não foi limpo durante a busca
+
                 if (editSearch.text.isNotEmpty()) {
                     btnClear.visibility = View.VISIBLE
                 }
 
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
-                    
+
                     if (posts.isNotEmpty()) {
                         tvEmpty.visibility = View.GONE
-                        recyclerView.adapter = PostAdapter(posts)
+                        // Adapter corrigido com os 3 parâmetros
+                        val adapter = PostAdapter(
+                            posts,
+                            onSaveClick = { post, isSaved ->
+                                if (isSaved) {
+                                    savePost(post)
+                                } else {
+                                    unsavePost(post)
+                                }
+                            },
+                            getSavedStatus = { post ->
+                                runBlocking { checkIfSaved(post) }
+                            }
+                        )
+                        recyclerView.adapter = adapter
                     } else {
                         tvEmpty.visibility = View.VISIBLE
-                        recyclerView.adapter = PostAdapter(emptyList())
+                        val emptyAdapter = PostAdapter(
+                            emptyList(),
+                            onSaveClick = { _, _ -> },
+                            getSavedStatus = { false }
+                        )
+                        recyclerView.adapter = emptyAdapter
                     }
                 } else {
                     Toast.makeText(this@SearchActivity, "Erro ao buscar notícias", Toast.LENGTH_SHORT).show()
@@ -135,6 +158,32 @@ class SearchActivity : AppCompatActivity() {
                 Toast.makeText(this@SearchActivity, "Verifique sua conexão", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun savePost(post: Post) {
+        lifecycleScope.launch {
+            val savedArticle = SavedArticle(
+                url = post.url,
+                title = post.title,
+                category = post.firstLabel(),
+                imageUrl = post.firstImage() ?: "",
+                date = post.getTempoRelativo(),
+                content = post.content
+            )
+            database.savedArticleDao().saveArticle(savedArticle)
+            (recyclerView.adapter as? PostAdapter)?.notifyDataSetChanged()
+        }
+    }
+
+    private fun unsavePost(post: Post) {
+        lifecycleScope.launch {
+            database.savedArticleDao().unsaveArticle(post.url)
+            (recyclerView.adapter as? PostAdapter)?.notifyDataSetChanged()
+        }
+    }
+
+    private suspend fun checkIfSaved(post: Post): Boolean {
+        return database.savedArticleDao().isArticleSaved(post.url)
     }
 
     private fun abrirLink(url: String) {
