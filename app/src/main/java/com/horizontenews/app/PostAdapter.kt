@@ -7,12 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class PostAdapter(
     private var posts: List<Post>,
@@ -24,7 +21,7 @@ class PostAdapter(
 
     init {
         posts.forEach { post ->
-            savedStatusCache[post.url] = runBlocking { getSavedStatus(post) }
+            savedStatusCache[post.url] = getSavedStatus(post)
         }
     }
 
@@ -63,8 +60,12 @@ class PostAdapter(
             holder.btnSave.setOnClickListener {
                 val newStatus = !isSaved
                 savedStatusCache[post.url] = newStatus
-                onSaveClick(post, newStatus)
                 updateSaveButtonIcon(holder.btnSave, newStatus)
+                onSaveClick(post, newStatus)
+                
+                // Mostrar Toast de confirmação
+                val msg = if (newStatus) "✅ Notícia salva!" else "❌ Notícia removida dos salvos"
+                Toast.makeText(holder.itemView.context, msg, Toast.LENGTH_SHORT).show()
             }
 
         } else if (holder is NormalViewHolder) {
@@ -83,8 +84,12 @@ class PostAdapter(
             holder.btnSave.setOnClickListener {
                 val newStatus = !isSaved
                 savedStatusCache[post.url] = newStatus
-                onSaveClick(post, newStatus)
                 updateSaveButtonIcon(holder.btnSave, newStatus)
+                onSaveClick(post, newStatus)
+                
+                // Mostrar Toast de confirmação
+                val msg = if (newStatus) "✅ Notícia salva!" else "❌ Notícia removida dos salvos"
+                Toast.makeText(holder.itemView.context, msg, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -115,10 +120,14 @@ class PostAdapter(
         this.posts = newPosts
         savedStatusCache.clear()
         posts.forEach { post ->
-            CoroutineScope(Dispatchers.IO).launch {
-                val status = getSavedStatus(post)
-                savedStatusCache[post.url] = status
-            }
+            savedStatusCache[post.url] = getSavedStatus(post)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun refreshSavedStatus() {
+        posts.forEach { post ->
+            savedStatusCache[post.url] = getSavedStatus(post)
         }
         notifyDataSetChanged()
     }
