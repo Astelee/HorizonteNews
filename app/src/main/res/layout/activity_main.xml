@@ -5,36 +5,37 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <!-- Barra fina laranja -->
+    <!-- Barra fina laranja no topo (igual à tela de abertura) -->
     <View
-        android:id="@+id/top_bar"
+        android:id="@+id/top_orange_bar"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="4dp"
         android:background="#FF6800"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Tarja branca com título grande -->
+    <!-- Título principal - igual à tela de abertura -->
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HORIZONTE NEWS"
-        android:textSize="28sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:textColor="#1F1F1F"
         android:letterSpacing="0.05"
-        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintTop_toBottomOf="@id/top_orange_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="16dp" />
 
-    <!-- Toolbar com botão de busca -->
+    <!-- Toolbar limpa -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/tv_title">
+        app:layout_constraintTop_toBottomOf="@id/tv_header"
+        app:contentInsetStart="0dp">
 
         <ImageButton
             android:id="@+id/btn_open_search"
@@ -44,9 +45,10 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_search_black"
             app:tint="#FF6800" />
+
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Conteúdo -->
+    <!-- Conteúdo das notícias -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -68,6 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="68dp"
         android:background="#1F1F1F"
+        android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -79,10 +82,19 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
-            <ImageView android:layout_width="28dp" android:layout_height="28dp" 
-                       android:src="@drawable/ic_home_black_24dp" app:tint="#FF6800"/>
-            <TextView android:text="Início" android:textColor="#FF6800" 
-                      android:textSize="12sp" android:textStyle="bold"/>
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_home_black_24dp"
+                app:tint="#FF6800" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Início"
+                android:textColor="#FF6800"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -92,9 +104,19 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
-            <ImageView android:layout_width="28dp" android:layout_height="28dp" 
-                       android:src="@drawable/ic_menu_black_24dp" app:tint="#FFFFFF"/>
-            <TextView android:text="Menu" android:textColor="#FFFFFF" android:textSize="12sp"/>
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_menu_black_24dp"
+                app:tint="#FFFFFF" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Menu"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
