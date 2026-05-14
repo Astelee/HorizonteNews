@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Cores para o Modo Noturno -->
-    <color name="white">#121212</color> <!-- Fundo fica escuro -->
-    <color name="black">#FFFFFF</color> <!-- Texto fica branco -->
-    <color name="colorPrimary">#0600a8</color> <!-- Seu azul oficial -->
+
+    <!-- Cores Principais -->
+    <color name="orange_main">#FF6800</color>
+    <color name="orange_news">#F29121</color>
+    <color name="horizonte_blue">#3D5AFE</color>
+    <color name="colorPrimary">#FF6800</color>
+
+    <!-- Cores para Modo Claro -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#1F1F1F</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+    
+    <color name="text_primary">#1F1F1F</color>
+    <color name="text_secondary">#666666</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="grey_border">#E0E0E0</color>
+
 </resources>
