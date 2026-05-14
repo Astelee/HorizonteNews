@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#121212">
 
     <!-- Barra fina laranja no topo (igual à tela principal) -->
     <View
@@ -12,12 +12,12 @@
         android:layout_height="5dp"
         android:background="#FF6800" />
 
-    <!-- Toolbar limpa -->
+    <!-- Toolbar escura -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#FFFFFF"
+        android:background="#1E1E1E"
         android:elevation="2dp"
         app:contentInsetStart="0dp">
 
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- Seta de voltar preta -->
+            <!-- Seta de voltar branca -->
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="48dp"
@@ -33,7 +33,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_back_arrow_black" />
+                android:src="@drawable/ic_back_arrow_white"
+                app:tint="#FFFFFF" />
 
             <!-- Título centralizado -->
             <TextView
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="HORIZONTE NEWS"
-                android:textColor="#1F1F1F"
+                android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
@@ -55,7 +56,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_share_black_custom"
+                android:src="@drawable/ic_share_white"
                 app:tint="#FF6800" />
 
         </RelativeLayout>
@@ -85,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="#1F1F1F"
+                android:textColor="#E1E1E1"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:lineSpacingExtra="4sp"
@@ -96,21 +97,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="#999999"
+                android:textColor="#AAAAAA"
                 android:textSize="12sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="16dp"
-                android:background="#EEEEEE" />
+                android:background="#333333" />
 
             <!-- Imagem da matéria -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#1E1E1E">
 
                 <ImageView
                     android:id="@+id/postImageDetail"
@@ -126,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:lineSpacingExtra="8sp"
-                android:textColor="#333333"
+                android:textColor="#CCCCCC"
                 android:textSize="16.5sp"
                 android:textIsSelectable="true" />
 
