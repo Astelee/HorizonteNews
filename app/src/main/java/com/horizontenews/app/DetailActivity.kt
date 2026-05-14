@@ -9,11 +9,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailActivity : AppCompatActivity() {
 
     private lateinit var btnSave: ImageView
+
+    private lateinit var database: AppDatabase
 
     private var isSaved = false
 
@@ -25,14 +31,18 @@ class DetailActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_detail)
 
-        // 1. Captura os dados vindos do Adapter
+        // Banco de dados
+        database = AppDatabase.getDatabase(this)
+
+        // Captura os dados vindos do Adapter
         val title = intent.getStringExtra("postTitle") ?: ""
         val content = intent.getStringExtra("postContent") ?: ""
         val image = intent.getStringExtra("postImage") ?: ""
         val tempoRelativo = intent.getStringExtra("postDate") ?: ""
         val category = intent.getStringExtra("postCategory") ?: "Notícia"
+        val url = intent.getStringExtra("postUrl") ?: title
 
-        // 2. Mapeia os componentes do layout
+        // Mapeia os componentes
         val tvTitle = findViewById<TextView>(R.id.postTitleDetail)
         val tvContent = findViewById<TextView>(R.id.postContentDetail)
         val tvDate = findViewById<TextView>(R.id.postDateDetail)
@@ -48,14 +58,13 @@ class DetailActivity : AppCompatActivity() {
         tvTitle.setTextIsSelectable(true)
         tvContent.setTextIsSelectable(true)
 
-        // 3. Define os textos
+        // Define os textos
         tvTitle.text = title
         tvCategory.text = category.uppercase()
 
-        // Exibe tempo relativo
         tvDate.text = "Publicado $tempoRelativo"
 
-        // 4. Limpeza do HTML
+        // Limpeza do HTML
         val htmlWithoutImages = content.replace(Regex("<img[^>]*>"), "")
 
         val cleanContent = htmlWithoutImages
@@ -70,19 +79,43 @@ class DetailActivity : AppCompatActivity() {
 
         tvContent.text = formattedContent.trim()
 
-        // 5. Carrega a imagem principal
+        // Carrega imagem
         Glide.with(this)
             .load(image)
             .placeholder(android.R.color.darker_gray)
             .centerCrop()
             .into(ivImage)
 
-        // 6. Botão voltar
+        // Verifica se já está salva
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            isSaved = database
+                .savedArticleDao()
+                .isArticleSaved(url)
+
+            withContext(Dispatchers.Main) {
+
+                if (isSaved) {
+
+                    btnSave.setImageResource(
+                        R.drawable.ic_bookmark_filled
+                    )
+
+                } else {
+
+                    btnSave.setImageResource(
+                        R.drawable.ic_bookmark_outline
+                    )
+                }
+            }
+        }
+
+        // Botão voltar
         btnBack.setOnClickListener {
             finish()
         }
 
-        // 7. Compartilhar notícia
+        // Compartilhar notícia
         btnShare.setOnClickListener {
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -103,36 +136,60 @@ class DetailActivity : AppCompatActivity() {
             )
         }
 
-        // 8. Botão salvar
+        // Botão salvar
         btnSave.setOnClickListener {
 
-            if (isSaved) {
+            lifecycleScope.launch(Dispatchers.IO) {
 
-                btnSave.setImageResource(
-                    R.drawable.ic_bookmark_outline
-                )
+                if (isSaved) {
 
-                isSaved = false
+                    database.savedArticleDao()
+                        .unsaveArticle(url)
 
-                Toast.makeText(
-                    this,
-                    "Removido dos salvos",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    isSaved = false
 
-            } else {
+                    withContext(Dispatchers.Main) {
 
-                btnSave.setImageResource(
-                    R.drawable.ic_bookmark_filled
-                )
+                        btnSave.setImageResource(
+                            R.drawable.ic_bookmark_outline
+                        )
 
-                isSaved = true
+                        Toast.makeText(
+                            this@DetailActivity,
+                            "Removido dos salvos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
-                Toast.makeText(
-                    this,
-                    "Notícia salva",
-                    Toast.LENGTH_SHORT
-                ).show()
+                } else {
+
+                    val article = SavedArticle(
+                        url = url,
+                        title = title,
+                        category = category,
+                        imageUrl = image,
+                        date = tempoRelativo,
+                        content = cleanContent
+                    )
+
+                    database.savedArticleDao()
+                        .saveArticle(article)
+
+                    isSaved = true
+
+                    withContext(Dispatchers.Main) {
+
+                        btnSave.setImageResource(
+                            R.drawable.ic_bookmark_filled
+                        )
+
+                        Toast.makeText(
+                            this@DetailActivity,
+                            "Notícia salva",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }
