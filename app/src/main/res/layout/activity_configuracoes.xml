@@ -2,7 +2,6 @@ package com.horizontenews.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,32 +21,30 @@ class ConfiguracoesActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Lista de configurações (sem "Meus Salvos")
         val items = listOf(
-            ConfigItem("Tema", R.drawable.ic_settings_gear),
-            ConfigItem("Compartilhar App", R.drawable.ic_share_black_custom),
-            ConfigItem("Sobre o App", R.drawable.ic_info)
-        )
-
-        recyclerView.adapter = ConfiguracoesAdapter(items) { item ->
-            when (item.title) {
-                "Tema" -> {
-                    // TODO: Trocar tema
-                }
-                "Compartilhar App" -> {
+            ConfigItem(
+                title = "Tema",
+                iconRes = R.drawable.ic_settings_gear,
+                action = { /* TODO: Trocar tema */ }
+            ),
+            ConfigItem(
+                title = "Compartilhar App",
+                iconRes = R.drawable.ic_share_black_custom,
+                action = {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, "Baixe o Horizonte News!")
                     }
                     startActivity(Intent.createChooser(shareIntent, "Compartilhar"))
                 }
-                "Sobre o App" -> {
-                    // TODO: Abrir tela sobre
-                }
-            }
-        }
+            ),
+            ConfigItem(
+                title = "Sobre o App",
+                iconRes = R.drawable.ic_info, // se não tiver, pode usar outro ícone
+                action = { /* TODO: Tela sobre */ }
+            )
+        )
+
+        recyclerView.adapter = ConfiguracoesAdapter(items)
     }
 }
-
-// Classe auxiliar
-data class ConfigItem(val title: String, val iconRes: Int)
