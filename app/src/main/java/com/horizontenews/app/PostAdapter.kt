@@ -3,7 +3,6 @@ package com.horizontenews.app
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,21 +10,17 @@ import com.bumptech.glide.Glide
 
 class PostAdapter(
     private var posts: List<Post>,
-    private val onSaveClick: (Post, Boolean, (Boolean) -> Unit) -> Unit,
-    private val getSavedStatus: (Post) -> Boolean,
-    private val onItemClick: (Post) -> Unit // Esta é a função que falta na SearchActivity
+    private val onItemClick: (Post) -> Unit
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tv_post_title)
         val ivImage: ImageView = itemView.findViewById(R.id.iv_post_image)
-        
-        // AQUI ESTAVA O ERRO: Certifique-se que no seu item_post.xml o ID seja btn_save
-        // Se o nome no XML for diferente, mude o R.id.btn_save abaixo para o nome que está lá
-        val btnSave: ImageButton = itemView.findViewById(R.id.btn_save)
+        val tvDate: TextView = itemView.findViewById(R.id.tv_post_date)
 
         fun bind(post: Post) {
             tvTitle.text = post.title
+            tvDate.text = post.getTempoRelativo()
             
             Glide.with(itemView.context)
                 .load(post.firstImage())
@@ -33,28 +28,8 @@ class PostAdapter(
                 .centerCrop()
                 .into(ivImage)
 
-            var isSaved = getSavedStatus(post)
-            updateSaveIcon(btnSave, isSaved)
-
-            btnSave.setOnClickListener {
-                val newStatus = !isSaved
-                onSaveClick(post, newStatus) { success ->
-                    if (success) {
-                        isSaved = newStatus
-                        updateSaveIcon(btnSave, isSaved)
-                    }
-                }
-            }
-
-            itemView.setOnClickListener {
-                onItemClick(post)
-            }
+            itemView.setOnClickListener { onItemClick(post) }
         }
-    }
-
-    private fun updateSaveIcon(button: ImageButton, isSaved: Boolean) {
-        val icon = if (isSaved) android.R.drawable.btn_star_big_on else android.R.drawable.btn_star_big_off
-        button.setImageResource(icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -70,10 +45,6 @@ class PostAdapter(
 
     fun updatePosts(newPosts: List<Post>) {
         this.posts = newPosts
-        notifyDataSetChanged()
-    }
-
-    fun refreshSavedStatus() {
         notifyDataSetChanged()
     }
 }
