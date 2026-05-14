@@ -1,50 +1,83 @@
 package com.horizontenews.app
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.horizontenews.app.databinding.ItemPostHighlightBinding
+import com.horizontenews.app.databinding.ItemPostBinding
 
 class PostAdapter(
-    private var posts: List<Post>,
+    private val posts: List<Post>,
     private val onItemClick: (Post) -> Unit
-) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvTitle: TextView = itemView.findViewById(R.id.tv_post_title)
-        val ivImage: ImageView = itemView.findViewById(R.id.iv_post_image)
-        val tvDate: TextView = itemView.findViewById(R.id.tv_post_date)
+    companion object {
+        private const val VIEW_TYPE_HIGHLIGHT = 0
+        private const val VIEW_TYPE_NORMAL = 1
+    }
 
-        fun bind(post: Post) {
-            tvTitle.text = post.title
-            tvDate.text = post.getTempoRelativo()
-            
-            Glide.with(itemView.context)
-                .load(post.firstImage())
-                .placeholder(android.R.color.darker_gray)
-                .centerCrop()
-                .into(ivImage)
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0) VIEW_TYPE_HIGHLIGHT else VIEW_TYPE_NORMAL
+    }
 
-            itemView.setOnClickListener { onItemClick(post) }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_HIGHLIGHT) {
+            val binding = ItemPostHighlightBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            HighlightViewHolder(binding)
+        } else {
+            val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            NormalViewHolder(binding)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
-        return PostViewHolder(view)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val post = posts[position]
+
+        if (holder is HighlightViewHolder) {
+            holder.bind(post)
+        } else if (holder is NormalViewHolder) {
+            holder.bind(post)
+        }
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(posts[position])
+    override fun getItemCount() = posts.size
+
+    // ViewHolder para notícia grande
+    inner class HighlightViewHolder(private val binding: ItemPostHighlightBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                onItemClick(posts[adapterPosition])
+            }
+        }
+
+        fun bind(post: Post) {
+            binding.tvTitle.text = post.title
+            binding.tvDate.text = post.publishedDate ?: "Ontem"
+
+            Glide.with(binding.root.context)
+                .load(post.imageUrl ?: post.url)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(binding.ivThumbnail)
+        }
     }
 
-    override fun getItemCount(): Int = posts.size
+    // ViewHolder para notícias pequenas
+    inner class NormalViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                onItemClick(posts[adapterPosition])
+            }
+        }
 
-    fun updatePosts(newPosts: List<Post>) {
-        this.posts = newPosts
-        notifyDataSetChanged()
+        fun bind(post: Post) {
+            binding.tvTitle.text = post.title
+            binding.tvDate.text = post.publishedDate ?: "Ontem"
+
+            Glide.with(binding.root.context)
+                .load(post.imageUrl ?: post.url)
+                .placeholder(R.drawable.ic_placeholder)
+                .into(binding.ivThumbnail)
+        }
     }
 }
