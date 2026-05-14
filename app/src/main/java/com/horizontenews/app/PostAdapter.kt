@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
@@ -55,17 +54,12 @@ class PostAdapter(
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.image)
 
-            // Configurar botão salvar
             updateSaveButtonIcon(holder.btnSave, isSaved)
             holder.btnSave.setOnClickListener {
                 val newStatus = !isSaved
                 savedStatusCache[post.url] = newStatus
                 updateSaveButtonIcon(holder.btnSave, newStatus)
                 onSaveClick(post, newStatus)
-                
-                // Mostrar Toast de confirmação
-                val msg = if (newStatus) "✅ Notícia salva!" else "❌ Notícia removida dos salvos"
-                Toast.makeText(holder.itemView.context, msg, Toast.LENGTH_SHORT).show()
             }
 
         } else if (holder is NormalViewHolder) {
@@ -79,17 +73,12 @@ class PostAdapter(
                 .placeholder(android.R.color.darker_gray)
                 .into(holder.image)
 
-            // Configurar botão salvar
             updateSaveButtonIcon(holder.btnSave, isSaved)
             holder.btnSave.setOnClickListener {
                 val newStatus = !isSaved
                 savedStatusCache[post.url] = newStatus
                 updateSaveButtonIcon(holder.btnSave, newStatus)
                 onSaveClick(post, newStatus)
-                
-                // Mostrar Toast de confirmação
-                val msg = if (newStatus) "✅ Notícia salva!" else "❌ Notícia removida dos salvos"
-                Toast.makeText(holder.itemView.context, msg, Toast.LENGTH_SHORT).show()
             }
         }
 
