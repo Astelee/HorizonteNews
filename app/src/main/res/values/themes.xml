@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Alterado de .Light para .DayNight -->
+
     <style name="Theme.HorizonteNews" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@color/black</item>
-        <item name="colorPrimary">@color/orange_news</item>
+        <item name="colorPrimary">@color/orange_main</item>
         <item name="colorPrimaryVariant">@color/orange_dark</item>
-        <item name="colorAccent">@color/orange_news</item>
+        <item name="colorOnPrimary">@android:color/white</item>
         
-        <!-- Isso garante que o fundo das telas mude de cor sozinho -->
         <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
+
 </resources>
