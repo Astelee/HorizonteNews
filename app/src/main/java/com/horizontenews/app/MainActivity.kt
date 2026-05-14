@@ -26,35 +26,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Ajustado para os IDs do seu novo XML
+        // Vinculando os componentes do XML com IDs exatos
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        
-        // Erro anterior: btn_search -> Agora: btn_open_search
         val btnSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        
-        // Novos botões da Bottom Bar
         val btnHome = findViewById<LinearLayout>(R.id.btn_home)
         val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
 
+        // Configurando a lista
         recyclerView.layoutManager = LinearLayoutManager(this)
         setupAdapter()
 
-        // Configura o carregamento ao puxar
+        // Configurando o "Puxar para atualizar"
         swipeRefreshLayout.setOnRefreshListener {
             fetchPosts()
         }
 
-        btnSearch.setOnClickListener {
+        // Configurando os cliques
+        btnSearch?.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        btnMenu.setOnClickListener {
-            // Abre a tela de configurações
+        btnMenu?.setOnClickListener {
+            // Abre a tela de configurações (verifique se o nome da classe está correto)
             startActivity(Intent(this, ConfiguracoesActivity::class.java))
         }
 
-        btnHome.setOnClickListener {
+        btnHome?.setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
         }
 
@@ -75,7 +73,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
-        // Mostra o ícone de carregamento do SwipeRefresh
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -93,12 +90,14 @@ class MainActivity : AppCompatActivity() {
                     postList.clear()
                     postList.addAll(posts)
                     adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(this@MainActivity, "Erro ao carregar dados", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                Toast.makeText(this@MainActivity, "Erro de conexão", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Falha na conexão", Toast.LENGTH_SHORT).show()
             }
         })
     }
