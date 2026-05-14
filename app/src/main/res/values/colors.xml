@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Cores para o Modo Claro -->
+
+    <!-- Cores Principais -->
+    <color name="orange_main">#FF6800</color>
+    <color name="orange_news">#F29121</color>
+    <color name="orange_dark">#E67E22</color>
+    <color name="colorPrimary">#FF6800</color>
+
+    <!-- Cores Modo Claro -->
     <color name="white">#FFFFFF</color>
     <color name="black">#1F1F1F</color>
     <color name="background">#FFFFFF</color>
@@ -12,7 +19,4 @@
     <color name="divider">#E0E0E0</color>
     <color name="grey_border">#E0E0E0</color>
 
-    <!-- Laranja principal -->
-    <color name="orange_main">#FF6800</color>
-    <color name="colorPrimary">#FF6800</color>
 </resources>
