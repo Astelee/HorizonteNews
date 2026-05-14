@@ -21,7 +21,11 @@ class ConfiguracoesActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_config)
         toolbar.setNavigationOnClickListener { finish() }
 
-        // O bloco do btnEngrenagem foi removido daqui para evitar erros
+        // Botão de engrenagem no topo
+        val btnEngrenagem = findViewById<ImageView>(R.id.btn_engrenagem)
+        btnEngrenagem.setOnClickListener {
+            startActivity(Intent(this, ThemeActivity::class.java))
+        }
 
         // RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_configuracoes)
@@ -81,7 +85,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
                 }
                 getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
                     .putFloat("font_scale", scale).apply()
-
+                
                 Toast.makeText(this, "Tamanho alterado! Reinicie o app.", Toast.LENGTH_LONG).show()
             }
             .setNegativeButton("Cancelar", null)
