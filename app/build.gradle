@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
-    id 'com.google.dagger.hilt.android'
+    id 'com.google.dagger.hilt.android'      // ← Sem versão aqui
 }
 
 android {
@@ -17,7 +17,6 @@ android {
         versionCode 2
         versionName "1.1"
 
-        // Chave da API Blogger (vem do local.properties)
         buildConfigField "String", "BLOGGER_API_KEY", "\"${BLOGGER_API_KEY}\""
     }
 
@@ -69,19 +68,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
-    // === Room Database (Cache Offline) ===
+    // Room
     implementation "androidx.room:room-runtime:2.6.1"
     implementation "androidx.room:room-ktx:2.6.1"
     kapt "androidx.room:room-compiler:2.6.1"
 
-    // ViewModel + Lifecycle
+    // Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.6"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.6"
 
-    // Hilt (Injeção de Dependência)
-    implementation "com.google.dagger:hilt-android:2.51.1"
-    kapt "com.google.dagger:hilt-compiler:2.51.1"
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.59.2"
+    kapt "com.google.dagger:hilt-compiler:2.59.2"
 }
 
 kapt {
