@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 
@@ -13,6 +14,10 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Força modo escuro
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        
         setContentView(R.layout.activity_detail)
 
         // 1. Captura os dados vindos do Adapter (já formatados pelo PostAdapter)
@@ -35,10 +40,10 @@ class DetailActivity : AppCompatActivity() {
         tvTitle.setTextIsSelectable(true)
         tvContent.setTextIsSelectable(true)
 
-        // 3. Define os textos (Removi a lógica de SimpleDateFormat que causava o erro)
+        // 3. Define os textos
         tvTitle.text = title
         tvCategory.text = category.uppercase()
-        
+
         // CORREÇÃO: Agora exibe apenas "Publicado há 8 horas" sem o "em:"
         tvDate.text = "Publicado $tempoRelativo"
 
