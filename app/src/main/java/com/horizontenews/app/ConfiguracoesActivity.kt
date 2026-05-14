@@ -32,6 +32,13 @@ class ConfiguracoesActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val items = listOf(
+            // NOVA OPÇÃO: Meus Salvos
+            ConfigItem(
+                title = "📌 Meus Salvos",
+                subtitle = "Ver notícias que você salvou",
+                icon = R.drawable.ic_bookmark_filled,
+                action = { abrirMeusSalvos() }
+            ),
             ConfigItem(
                 title = "Tema",
                 subtitle = "Modo claro ou escuro",
@@ -67,6 +74,13 @@ class ConfiguracoesActivity : AppCompatActivity() {
         recyclerView.adapter = ConfiguracoesAdapter(items)
     }
 
+    // NOVA FUNÇÃO: Abrir Meus Salvos
+    private fun abrirMeusSalvos() {
+        val intent = Intent(this, SavedArticlesActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
     private fun abrirNotificacoes() {
         FirebaseMessaging.getInstance().subscribeToTopic("Geral")
         Toast.makeText(this, "✅ Notificações ativadas!", Toast.LENGTH_LONG).show()
@@ -85,7 +99,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
                 }
                 getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
                     .putFloat("font_scale", scale).apply()
-                
+
                 Toast.makeText(this, "Tamanho alterado! Reinicie o app.", Toast.LENGTH_LONG).show()
             }
             .setNegativeButton("Cancelar", null)
