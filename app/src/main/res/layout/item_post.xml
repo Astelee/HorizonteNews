@@ -1,75 +1,49 @@
-package com.horizontenews.app
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.horizontenews.app.databinding.ItemPostHighlightBinding
-import com.horizontenews.app.databinding.ItemPostBinding
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-class PostAdapter(
-    private val posts: List<Post>,
-    private val onItemClick: (Post) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        <ImageView
+            android:id="@+id/ivThumbnail"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_placeholder" />
 
-    companion object {
-        private const val VIEW_TYPE_HIGHLIGHT = 0
-        private const val VIEW_TYPE_NORMAL = 1
-    }
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
 
-    override fun getItemViewType(position: Int): Int {
-        // A primeira notícia (posição 0) é o destaque
-        return if (position == 0) VIEW_TYPE_HIGHLIGHT else VIEW_TYPE_NORMAL
-    }
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="#1F1F1F"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return if (viewType == VIEW_TYPE_HIGHLIGHT) {
-            val binding = ItemPostHighlightBinding.inflate(inflater, parent, false)
-            HighlightViewHolder(binding)
-        } else {
-            val binding = ItemPostBinding.inflate(inflater, parent, false)
-            NormalViewHolder(binding)
-        }
-    }
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#666666"
+                android:textSize="12sp" />
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val post = posts[position]
-        when (holder) {
-            is HighlightViewHolder -> holder.bind(post)
-            is NormalViewHolder -> holder.bind(post)
-        }
-    }
-
-    override fun getItemCount() = posts.size
-
-    // ViewHolder para a notícia principal (Destaque - usa o XML que você mandou)
-    inner class HighlightViewHolder(private val binding: ItemPostHighlightBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(post: Post) {
-            binding.tvTitleBig.text = post.title
-            binding.tvDateBig.text = post.getTempoRelativo()
-
-            Glide.with(binding.root.context)
-                .load(post.firstImage() ?: R.drawable.ic_placeholder)
-                .into(binding.ivThumbnailBig)
-
-            binding.root.setOnClickListener { onItemClick(post) }
-        }
-    }
-
-    // ViewHolder para as notícias menores da lista
-    inner class NormalViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(post: Post) {
-            // Se os IDs do seu item_post.xml (o pequeno) forem diferentes, ajuste aqui:
-            binding.tvTitle.text = post.title
-            binding.tvDate.text = post.getTempoRelativo()
-
-            Glide.with(binding.root.context)
-                .load(post.firstImage() ?: R.drawable.ic_placeholder)
-                .centerCrop()
-                .into(binding.ivThumbnail)
-
-            binding.root.setOnClickListener { onItemClick(post) }
-        }
-    }
-}
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
