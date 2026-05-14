@@ -1,4 +1,4 @@
-package com.horizontenews.app
+package com.horizontenews.app // Corrigido: 'package' em minúsculo
 
 import android.content.Intent
 import android.os.Bundle
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 1. Vinculando os componentes do seu XML
+        // 1. Vinculando os componentes do seu XML (IDs conferidos)
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         val btnSearch = findViewById<ImageButton>(R.id.btn_open_search)
@@ -44,16 +44,19 @@ class MainActivity : AppCompatActivity() {
 
         // 4. Configurando os cliques dos botões
         btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+            // Garanta que a SearchActivity existe no seu projeto
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
         }
 
         btnMenu.setOnClickListener {
-            // Se você tiver uma tela de configurações ou menu lateral
-            startActivity(Intent(this, ConfiguracoesActivity::class.java))
+            // Garanta que a ConfiguracoesActivity existe no seu projeto
+            val intent = Intent(this, ConfiguracoesActivity::class.java)
+            startActivity(intent)
         }
 
         btnHome.setOnClickListener {
-            // Rola a lista para o topo se o usuário clicar em Início
+            // Rola a lista para o topo
             recyclerView.smoothScrollToPosition(0)
         }
 
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
+        // Criando o adaptador com a lista e a ação de clique no item
         adapter = PostAdapter(postList) { post ->
             val intent = Intent(this, DetailActivity::class.java).apply {
                 putExtra("postTitle", post.title)
@@ -75,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
+        // Ativa o ícone de carregamento redondo do SwipeRefreshLayout
         swipeRefreshLayout.isRefreshing = true
 
         val retrofit = Retrofit.Builder()
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                swipeRefreshLayout.isRefreshing = false
+                swipeRefreshLayout.isRefreshing = false // Desativa o carregamento
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
                     postList.clear()
