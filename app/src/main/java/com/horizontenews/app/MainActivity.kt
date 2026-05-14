@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -97,28 +98,40 @@ class MainActivity : AppCompatActivity() {
 
     private fun savePost(post: Post) {
         lifecycleScope.launch {
-            val savedArticle = SavedArticle(
-                url = post.url,
-                title = post.title,
-                category = post.firstLabel(),
-                imageUrl = post.firstImage() ?: "",
-                date = post.getTempoRelativo(),
-                content = post.content
-            )
-            database.savedArticleDao().saveArticle(savedArticle)
-            postAdapter.notifyDataSetChanged()
+            try {
+                val savedArticle = SavedArticle(
+                    url = post.url,
+                    title = post.title,
+                    category = post.firstLabel(),
+                    imageUrl = post.firstImage() ?: "",
+                    date = post.getTempoRelativo(),
+                    content = post.content
+                )
+                database.savedArticleDao().saveArticle(savedArticle)
+                Toast.makeText(this@MainActivity, "✅ Notícia salva!", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Erro ao salvar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun unsavePost(post: Post) {
         lifecycleScope.launch {
-            database.savedArticleDao().unsaveArticle(post.url)
-            postAdapter.notifyDataSetChanged()
+            try {
+                database.savedArticleDao().unsaveArticle(post.url)
+                Toast.makeText(this@MainActivity, "❌ Notícia removida dos salvos", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Erro ao remover: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private suspend fun checkIfSaved(post: Post): Boolean {
-        return database.savedArticleDao().isArticleSaved(post.url)
+        return try {
+            database.savedArticleDao().isArticleSaved(post.url)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun verificarPermissaoNotificacao() {
@@ -150,11 +163,14 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     postsList = response.body()?.items ?: emptyList()
                     postAdapter.updatePosts(postsList)
+                } else {
+                    Toast.makeText(this@MainActivity, "Erro ao carregar notícias", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(this@MainActivity, "Erro de conexão: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -168,6 +184,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        postAdapter.notifyDataSetChanged()
+        postAdapter.refreshSavedStatus()
     }
 }
