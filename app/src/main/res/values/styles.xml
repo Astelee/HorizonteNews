@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Base -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#F29121</item>
+        <item name="colorPrimaryDark">#E67E22</item>
+        <item name="colorAccent">#F29121</item>
+    </style>
+
+    <!-- Tema Escuro para o App todo -->
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">#F29121</item>
+        <item name="colorPrimaryDark">#E67E22</item>
+        <item name="colorAccent">#F29121</item>
+        <item name="android:windowBackground">#121212</item>
+        <item name="android:colorBackground">#121212</item>
+        <item name="android:textColor">#E1E1E1</item>
+    </style>
+</resources>
