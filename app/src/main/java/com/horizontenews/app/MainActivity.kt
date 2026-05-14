@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Força o modo claro para evitar tela preta inicial
+        // Força o modo claro
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         verificarPermissaoNotificacao()
         FirebaseMessaging.getInstance().subscribeToTopic("Geral")
 
-        // Configurações da Toolbar (com nova cor #FF6800)
         setupToolbar()
 
         // Inicialização dos componentes
@@ -62,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         btnMenu.setOnClickListener {
             val intent = Intent(this, ConfiguracoesActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)  // Animação
         }
 
         // Botão de Busca
@@ -69,13 +69,14 @@ class MainActivity : AppCompatActivity() {
         btnOpenSearch.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)   // Animação
         }
 
-        // SwipeRefresh com cor laranja principal
+        // SwipeRefresh
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF6800"))
         swipeRefreshLayout.setOnRefreshListener { fetchPosts() }
 
-        // Carrega as notícias iniciais
+        // Carrega as notícias
         fetchPosts()
     }
 
@@ -108,14 +109,11 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val posts = response.body()?.items ?: emptyList()
                     recyclerView.adapter = PostAdapter(posts)
-                } else {
-                    swipeRefreshLayout.isRefreshing = false
                 }
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                // TODO: Mostrar mensagem de erro ao usuário (Snackbar ou Toast)
             }
         })
     }
@@ -125,7 +123,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Nova cor principal do app
         window.statusBarColor = Color.parseColor("#FF6800")
     }
 }
