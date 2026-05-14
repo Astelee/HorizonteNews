@@ -10,32 +10,31 @@ import androidx.appcompat.widget.Toolbar
 class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_detail)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
 
-        // Configura toolbar corretamente
         setSupportActionBar(toolbar)
+
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val btnBack = findViewById<ImageButton>(R.id.btn_back)
-        val btnShare = findViewById<ImageButton>(R.id.btn_share)
+        val btnBack =
+            findViewById<ImageButton>(R.id.btn_back)
 
-        // Botão voltar
+        val btnShare =
+            findViewById<ImageButton>(R.id.btn_share)
+
         btnBack.setOnClickListener {
-            finish()
-
-            overridePendingTransition(
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
+            onBackPressedDispatcher.onBackPressed()
         }
 
-        // Compartilhar notícia
         btnShare.setOnClickListener {
 
             val shareIntent = Intent().apply {
+
                 action = Intent.ACTION_SEND
 
                 putExtra(
@@ -54,16 +53,28 @@ class DetailActivity : AppCompatActivity() {
             )
         }
 
-        // Receber dados da matéria
-        val title = intent.getStringExtra("title") ?: "Sem título"
+        val title =
+            intent.getStringExtra("title")
+                ?: "Sem título"
 
-        val content = intent.getStringExtra("content")
-            ?: "Conteúdo não disponível"
+        val content =
+            intent.getStringExtra("content")
+                ?: "Conteúdo não disponível"
 
-        val date = intent.getStringExtra("date") ?: ""
+        val date =
+            intent.getStringExtra("date")
+                ?: ""
 
-        findViewById<TextView>(R.id.postTitleDetail).text = title
-        findViewById<TextView>(R.id.postContentDetail).text = content
-        findViewById<TextView>(R.id.postDateDetail).text = date
+        findViewById<TextView>(
+            R.id.postTitleDetail
+        ).text = title
+
+        findViewById<TextView>(
+            R.id.postContentDetail
+        ).text = content
+
+        findViewById<TextView>(
+            R.id.postDateDetail
+        ).text = date
     }
 }
