@@ -14,24 +14,22 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- Imagem à esquerda -->
         <ImageView
-            android:id="@+id/ivThumbnail"  <!-- MUDADO de iv_thumbnail_small -->
+            android:id="@+id/ivThumbnail"
             android:layout_width="100dp"
             android:layout_height="70dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_placeholder" />
 
-        <!-- Texto à direita -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTitle"  <!-- MUDADO de tv_title_small -->
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -41,9 +39,8 @@
                 android:ellipsize="end"
                 android:textColor="#1F1F1F" />
 
-            <!-- ADICIONE O tvLabel AQUI -->
             <TextView
-                android:id="@+id/tvLabel"  <!-- ADICIONADO -->
+                android:id="@+id/tvLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
@@ -52,7 +49,7 @@
                 android:layout_marginTop="4dp" />
 
             <TextView
-                android:id="@+id/tvDate"  <!-- MUDADO de tv_date_small -->
+                android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
