@@ -42,10 +42,16 @@ class SavedArticlesAdapter(
             tvTitle.text = article.title
             tvCategory.text = article.category
             tvDate.text = article.date
-            Glide.with(itemView.context)
-                .load(article.imageUrl)
-                .placeholder(android.R.color.darker_gray)
-                .into(ivImage)
+            
+            try {
+                Glide.with(itemView.context)
+                    .load(article.imageUrl)
+                    .placeholder(android.R.color.darker_gray)
+                    .error(android.R.color.darker_gray)
+                    .into(ivImage)
+            } catch (e: Exception) {
+                ivImage.setImageResource(android.R.color.darker_gray)
+            }
         }
     }
 }
