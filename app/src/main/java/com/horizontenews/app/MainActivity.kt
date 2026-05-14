@@ -10,7 +10,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -32,15 +31,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var postAdapter: PostAdapter
+    // Mudamos para garantir que use a lista de 'Post' que o Adapter espera
     private var postsList: List<Post> = emptyList()
     private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Removido forçamento de modo escuro - agora respeita a escolha do sistema / ThemeActivity
-        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
         setContentView(R.layout.activity_main)
 
         database = AppDatabase.getDatabase(this)
@@ -50,12 +46,15 @@ class MainActivity : AppCompatActivity() {
 
         setupToolbar()
 
+        // Verifica se os IDs no seu activity_main.xml são exatamente esses:
         recyclerView = findViewById(R.id.recyclerView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        postAdapter = PostAdapter(emptyList(),
+        // Mantendo toda a sua lógica de salvamento original
+        postAdapter = PostAdapter(
+            posts = emptyList(),
             onSaveClick = { post, isSaved, callback ->
                 if (isSaved) {
                     savePost(post, callback)
@@ -65,27 +64,32 @@ class MainActivity : AppCompatActivity() {
             },
             getSavedStatus = { post ->
                 runBlocking { checkIfSaved(post) }
+            },
+            onItemClick = { post ->
+                // Adicionamos o clique para abrir a tela de detalhes que você já tinha
+                val intent = Intent(this, DetailActivity::class.java).apply {
+                    putExtra("postTitle", post.title)
+                    putExtra("postContent", post.content)
+                    putExtra("postImage", post.firstImage())
+                    putExtra("postDate", post.getTempoRelativo())
+                }
+                startActivity(intent)
             }
         )
         recyclerView.adapter = postAdapter
 
-        val btnHome = findViewById<LinearLayout>(R.id.btn_home)
-        val btnMenu = findViewById<LinearLayout>(R.id.btn_menu)
-
-        btnHome.setOnClickListener {
+        // Seus botões de navegação e busca permanecem iguais
+        findViewById<LinearLayout>(R.id.btn_home).setOnClickListener {
             recyclerView.smoothScrollToPosition(0)
         }
 
-        btnMenu.setOnClickListener {
-            val intent = Intent(this, ConfiguracoesActivity::class.java)
-            startActivity(intent)
+        findViewById<LinearLayout>(R.id.btn_menu).setOnClickListener {
+            startActivity(Intent(this, ConfiguracoesActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
-        val btnOpenSearch = findViewById<ImageButton>(R.id.btn_open_search)
-        btnOpenSearch.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+        findViewById<ImageButton>(R.id.btn_open_search).setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
             overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
         }
 
@@ -95,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         fetchPosts()
     }
 
+    // --- Suas funções de Banco de Dados permanecem intocadas ---
     private fun savePost(post: Post, callback: (Boolean) -> Unit) {
         lifecycleScope.launch {
             try {
@@ -137,25 +142,19 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
                 != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    this, 
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS), 
-                    101
-                )
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
             }
         }
     }
 
     private fun fetchPosts() {
         swipeRefreshLayout.isRefreshing = true
-
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/blogger/v3/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(BloggerService::class.java)
-
         service.getPosts(Config.BLOG_ID, Config.API_KEY).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
                 swipeRefreshLayout.isRefreshing = false
@@ -166,10 +165,9 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Erro ao carregar notícias", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                Toast.makeText(this@MainActivity, "Erro de conexão: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Erro de conexão", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -178,8 +176,6 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        // Deixa o sistema controlar a cor da status bar
-        // window.statusBarColor = Color.parseColor("#FF6800")
     }
 
     override fun onResume() {
