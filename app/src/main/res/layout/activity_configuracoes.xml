@@ -25,7 +25,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
             ConfigItem(
                 title = "Tema",
                 iconRes = R.drawable.ic_settings_gear,
-                action = { /* TODO: Trocar tema */ }
+                action = { /* Trocar tema */ }
             ),
             ConfigItem(
                 title = "Compartilhar App",
@@ -40,8 +40,8 @@ class ConfiguracoesActivity : AppCompatActivity() {
             ),
             ConfigItem(
                 title = "Sobre o App",
-                iconRes = R.drawable.ic_info, // se não tiver, pode usar outro ícone
-                action = { /* TODO: Tela sobre */ }
+                iconRes = R.drawable.ic_settings_gear, // temporário
+                action = { /* Sobre */ }
             )
         )
 
